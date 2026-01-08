@@ -3,11 +3,14 @@ package main
 import (
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
+
+	router.Use(cors.Default()) // All origins allowed by default
 
 	router.GET("/status", func(context *gin.Context) {
 		context.JSON(200, gin.H{
