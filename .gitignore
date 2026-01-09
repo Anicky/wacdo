@@ -1,9 +1,9 @@
-# Dependency directories
-vendor/
+# Testing
+cover.out
+cover.html
 
 # env file
-src/.env
+.env
 
 # Editor/IDE
 .idea/
-.vscode/

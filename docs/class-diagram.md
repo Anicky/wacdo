@@ -1,7 +1,7 @@
 ```mermaid
 classDiagram
 
-    class Item {
+    class Product {
 	    +int id
 	    +string name
 	    +string description
@@ -12,10 +12,6 @@ classDiagram
 	    +datetime updatedAt
     }
 
-    class Product {
-	    +int id
-    }
-
     class ProductCategory {
 	    +int id
 	    +string name
@@ -24,31 +20,13 @@ classDiagram
 
     class Menu {
 	    +int id
-    }
-
-    class MenuOption {
-	    +int id
-    }
-
-    class Order {
-	    +int id
-	    +string ticketNumber
-	    +datetime createdAt
-	    +datetime preparedAt
-	    +datetime deliveratedAt
-	    +getPrice()
-	    +setStatus(status)
-	    +isReadyForDelivery()
-    }
-
-    class User {
-	    +int id
-	    +string username
-	    +string password
-	    +bool isActive
+	    +string name
+	    +string description
+	    +string image
+	    +float price
+	    +bool isAvailable
 	    +datetime createdAt
 	    +datetime updatedAt
-	    +checkPassword(password)
     }
 
     class UserRole {
@@ -65,17 +43,42 @@ classDiagram
 	    DELIVERED
     }
 
+    class Order {
+	    +int id
+	    +string ticketNumber
+	    +datetime createdAt
+	    +datetime preparedAt
+	    +datetime deliveredAt
+	    +getPrice()
+	    +setStatus(status)
+	    +isReadyForDelivery()
+    }
+
+    class OrderItem {
+	    +int id
+	    +int quantity
+	    +string name
+	    +string description
+	    +string image
+	    +float price
+    }
+
+    class User {
+	    +int id
+	    +string email
+	    +string password
+	    +datetime createdAt
+	    +datetime updatedAt
+	    +checkPassword(password)
+    }
+
 	<<enumeration>> UserRole
 	<<enumeration>> OrderStatus
 
-    Product "*" --> "1" ProductCategory : has
-    User "*" <--> "*" UserRole : has
+    Product "*" --> "1" ProductCategory : belongsTo
+    User "*" --> "1" UserRole : has
     Order "*" --> "1" User : isManagedBy
     Order "*" --> "1" OrderStatus : has
-    Product --|> Item
-    Menu --|> Item
     Menu "*" --> "*" Product : contains
-    Order "*" --> "*" Item : contains
-    MenuOption --|> Item
-    Menu "*" -- "*" MenuOption : contains
+    Order "*" --> "*" OrderItem : contains
 ```

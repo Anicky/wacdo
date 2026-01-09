@@ -1,0 +1,12 @@
+info:
+  contact: {}
+  description: Order management application for Wacdo
+  title: Wacdo
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
