@@ -4,16 +4,16 @@ import (
 	"context"
 	"log"
 	"wacdo/models"
-	"wacdo/utils"
+	utils2 "wacdo/utils"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 func main() {
-	utils.InitEnvVars()
+	utils2.InitEnvVars()
 
-	db := utils.InitDatabase()
+	db := utils2.InitDatabase()
 
 	migrateSchema(db)
 
