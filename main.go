@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"wacdo/config"
 	"wacdo/models"
+	"wacdo/routes"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -46,8 +47,10 @@ func main() {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// @TODO: add routes for authentication, menu, product
-	// @TODO: add middleware for role
+	routes.UserRoutes(router)
+	routes.ProductCategoryRoutes(router)
+	routes.ProductRoutes(router)
+	// @TODO: add routes for menu, orders
 
 	config.ConnectDB()
 

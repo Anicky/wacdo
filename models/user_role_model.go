@@ -1,10 +1,10 @@
 package models
 
-type UserRole int64
+type UserRole string
 
 const (
-	Admin       UserRole = 0
-	Greeter     UserRole = 1
-	OrderPicker UserRole = 2
-	Manager     UserRole = 3
+	Admin       UserRole = "admin"
+	Greeter     UserRole = "greeter"
+	OrderPicker UserRole = "order_picker"
+	Manager     UserRole = "manager"
 )

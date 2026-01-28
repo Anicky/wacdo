@@ -14,9 +14,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		// If .env file is not found, it is not necessarily an error.
-		// With Render, environment variables are injected; there is no need for .env file.
-		log.Print("Unable to find .env file.")
+		log.Fatalf("Unable to find .env file.")
 	}
 
 	config.ConnectDB()
@@ -29,7 +27,10 @@ func main() {
 }
 
 func migrateSchema() {
-	err := config.DB.AutoMigrate(&models.User{}, &models.Product{})
+	err := config.DB.AutoMigrate(
+		&models.User{},
+		&models.ProductCategory{},
+	)
 	if err != nil {
 		log.Fatal("Unable to auto migrate: ", err)
 	}
@@ -41,10 +42,10 @@ func deleteTestData() {
 	config.DB.Unscoped().Where("1 = 1").Find(&users)
 	config.DB.Unscoped().Delete(&users)
 
-	// Remove products
-	var products []models.Product
-	config.DB.Unscoped().Where("1 = 1").Find(&products)
-	config.DB.Unscoped().Delete(&products)
+	// Remove products categories
+	var productsCategories []models.ProductCategory
+	config.DB.Unscoped().Where("1 = 1").Find(&productsCategories)
+	config.DB.Unscoped().Delete(&productsCategories)
 }
 
 func createTestData() {
@@ -53,22 +54,34 @@ func createTestData() {
 	// Create users
 	err := gorm.G[models.User](config.DB).Create(ctx, &models.User{
 		Email:    "admin@wacdo.com",
-		Password: hashPassword("admin"),
+		Password: hashPassword("Admin1234!"),
+		Role:     "admin",
 	})
 	if err != nil {
 		log.Fatal("Unable to create user data: ", err)
 	}
 
-	// Create products
-	err = gorm.G[models.Product](config.DB).Create(ctx, &models.Product{
-		Name:        "BigWac",
-		Description: "Le burger classique",
-		Image:       "https://www.shutterstock.com/image-photo/delicious-double-cheeseburger-big-mac-600nw-2510772013.jpg",
-		Price:       4.85,
-		IsAvailable: true,
+	// Create products categories
+	err = gorm.G[models.ProductCategory](config.DB).Create(ctx, &models.ProductCategory{
+		Name:        "Burgers",
+		Description: "Les burgers",
 	})
 	if err != nil {
-		log.Fatal("Unable to create product data: ", err)
+		log.Fatal("Unable to create product category data: ", err)
+	}
+	err = gorm.G[models.ProductCategory](config.DB).Create(ctx, &models.ProductCategory{
+		Name:        "Frites",
+		Description: "Les frites",
+	})
+	if err != nil {
+		log.Fatal("Unable to create product category data: ", err)
+	}
+	err = gorm.G[models.ProductCategory](config.DB).Create(ctx, &models.ProductCategory{
+		Name:        "Boissons",
+		Description: "Les boissons",
+	})
+	if err != nil {
+		log.Fatal("Unable to create product category data: ", err)
 	}
 }
 

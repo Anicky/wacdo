@@ -8,8 +8,8 @@ type Menu struct {
 	Name        string    `binding:"required"`
 	Description string    `binding:"required"`
 	Image       string
-	Price       float32
-	IsAvailable bool
+	Price       float32 `binding:"required"`
+	IsAvailable bool    `binding:"required"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
