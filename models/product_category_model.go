@@ -11,9 +11,10 @@ import (
 )
 
 type ProductCategory struct {
-	ID          uint   `gorm:"primaryKey"`
-	Name        string `binding:"required"`
-	Description string `binding:"required"`
+	ID          uint      `gorm:"primaryKey"`
+	Name        string    `binding:"required"`
+	Description string    `binding:"required"`
+	Products    []Product `gorm:"foreignKey:CategoryID"`
 }
 
 func FindProductCategoryById(context *gin.Context) (productCategory *ProductCategory, err error) {

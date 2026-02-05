@@ -18,7 +18,7 @@ import (
 func GetProductsCategories(context *gin.Context) {
 	var productsCategories []models.ProductCategory
 
-	if err := config.DB.Find(&productsCategories).Error; err != nil {
+	if err := config.DB.Preload("Products").Find(&productsCategories).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch products categories."})
 		return
 	}

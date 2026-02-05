@@ -12,24 +12,34 @@ import (
 )
 
 type Product struct {
-	ID          uint   `gorm:"primaryKey"`
-	Name        string `binding:"required"`
-	Description string `binding:"required"`
+	ID          uint `gorm:"primaryKey"`
+	Name        string
+	Description string
 	Image       string
-	Price       float32 `binding:"required"`
-	IsAvailable bool    `binding:"required"`
-	CategoryID  uint    `binding:"required"`
-	Category    ProductCategory
+	Price       float32
+	IsAvailable bool
+	CategoryID  uint
+	Category    ProductCategory `gorm:"foreignKey:CategoryID"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
 
+type ProductInsertInput struct {
+	Name        *string  `json:"name" binding:"required"`
+	Description *string  `json:"description" binding:"required"`
+	Price       *float32 `json:"price" binding:"required"`
+	IsAvailable *bool    `json:"isAvailable" binding:"required"`
+	CategoryID  *uint    `json:"categoryID" binding:"required"`
+	// @TODO: image
+}
+
 type ProductUpdateInput struct {
-	Name        *string    `json:"name"`
-	Description *string    `json:"description"`
-	Price       *[]float32 `json:"price"`
-	IsAvailable *[]bool    `json:"isAvailable"`
-	// @TODO: category?
+	Name        *string  `json:"name"`
+	Description *string  `json:"description"`
+	Price       *float32 `json:"price"`
+	IsAvailable *bool    `json:"isAvailable"`
+	CategoryID  *uint    `json:"categoryID"`
+	// @TODO: image
 }
 
 func FindProductById(context *gin.Context) (product *Product, err error) {

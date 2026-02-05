@@ -20,7 +20,7 @@ import (
 func GetProducts(context *gin.Context) {
 	var products []models.Product
 
-	if err := config.DB.Find(&products).Error; err != nil {
+	if err := config.DB.Preload("Category").Find(&products).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch products."})
 		return
 	}
@@ -59,30 +59,44 @@ func GetProduct(context *gin.Context) {
 // @Security BearerAuth
 // @Router /product [post]
 func PostProduct(context *gin.Context) {
-	var product models.Product
-
-	if err := context.ShouldBindJSON(&product); err != nil {
+	var input models.ProductInsertInput
+	if err := context.ShouldBindJSON(&input); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data."})
 
 		return
 	}
 
-	path, err := utils.UploadImage(context)
-	if err != nil {
-		return
+	insert := make(map[string]interface{})
+
+	if input.Name != nil {
+		insert["name"] = *input.Name
 	}
 
-	if path != nil {
-		product.Image = *path
+	if input.Description != nil {
+		insert["description"] = *input.Description
 	}
 
-	if err := config.DB.Create(&product).Error; err != nil {
+	if input.Price != nil {
+		insert["price"] = *input.Price
+	}
+
+	if input.IsAvailable != nil {
+		insert["isAvailable"] = *input.IsAvailable
+	}
+
+	if input.CategoryID != nil {
+		insert["categoryID"] = *input.CategoryID
+	}
+
+	// @TODO: image
+
+	if err := config.DB.Model(models.Product{}).Create(&insert).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create product."})
 
 		return
 	}
 
-	context.JSON(http.StatusCreated, product)
+	context.JSON(http.StatusCreated, insert)
 }
 
 // PutProduct godoc
