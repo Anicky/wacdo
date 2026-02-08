@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -113,16 +115,297 @@ func TestGetProductCategoryInvalidId(testing *testing.T) {
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
 }
 
-// @TODO: post success
-// @TODO: post error
-// @TODO: post unauthorized
-// @TODO: put success
-// @TODO: put error
-// @TODO: put unauthorized
-// @TODO: put not found
-// @TODO: put invalid id
-// @TODO: delete success
-// @TODO: delete error
-// @TODO: delete unauthorized
-// @TODO: delete not found
-// @TODO: delete invalid id
+func TestPostProductCategorySuccess(testing *testing.T) {
+	router := InitTest()
+
+	product := map[string]interface{}{
+		"name":        "Test product category 3",
+		"description": "Test product category description 3",
+	}
+
+	data, err := json.Marshal(product)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPost, "/products/categories/", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusCreated, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "Test product category 3")
+	assert.Contains(testing, body, "Test product category description 3")
+}
+
+func TestPostProductCategoryError(testing *testing.T) {
+	router := InitTest()
+
+	product := map[string]interface{}{
+		"name":        1234,
+		"description": 1234,
+	}
+
+	data, err := json.Marshal(product)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPost, "/products/categories/", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusBadRequest, response.Code)
+}
+
+func TestPostProductCategoryUnauthorized(testing *testing.T) {
+	router := InitTest()
+
+	product := map[string]interface{}{
+		"name":        "Test product category 3",
+		"description": "Test product category description 3",
+	}
+
+	data, err := json.Marshal(product)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPost, "/products/categories/", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+}
+
+func TestPutProductCategorySuccess(testing *testing.T) {
+	router := InitTest()
+
+	product := map[string]interface{}{
+		"name":        "Test product category 1b",
+		"description": "Test product category description 1b",
+		"price":       3.29,
+		"isAvailable": false,
+		"categoryId":  1,
+	}
+
+	data, err := json.Marshal(product)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPut, "/products/categories/1", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusOK, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "Test product category 1b")
+	assert.Contains(testing, body, "Test product category description 1b")
+}
+
+func TestPutProductCategoryError(testing *testing.T) {
+	router := InitTest()
+
+	product := map[string]interface{}{
+		"name":        1234,
+		"description": 1234,
+	}
+
+	data, err := json.Marshal(product)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPut, "/products/categories/1", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusBadRequest, response.Code)
+}
+
+func TestPutProductCategoryUnauthorized(testing *testing.T) {
+	router := InitTest()
+
+	product := map[string]interface{}{
+		"name":        "Test product category 1b",
+		"description": "Test product category description 1b",
+	}
+
+	data, err := json.Marshal(product)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPut, "/products/categories/1", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+}
+
+func TestPutProductCategoryNotFound(testing *testing.T) {
+	router := InitTest()
+
+	product := map[string]interface{}{
+		"name":        "Test product category 1b",
+		"description": "Test product category description 1b",
+	}
+
+	data, err := json.Marshal(product)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPut, "/products/categories/0", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusNotFound, response.Code)
+}
+
+func TestPutProductCategoryInvalidId(testing *testing.T) {
+	router := InitTest()
+
+	product := map[string]interface{}{
+		"name":        "Test product category 1b",
+		"description": "Test product category description 1b",
+	}
+
+	data, err := json.Marshal(product)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPut, "/products/categories/a", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusBadRequest, response.Code)
+}
+
+func TestDeleteProductCategorySuccess(testing *testing.T) {
+	router := InitTest()
+
+	request, err := http.NewRequest(http.MethodDelete, "/products/categories/1", nil)
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusOK, response.Code)
+}
+
+func TestDeleteProductCategoryUnauthorized(testing *testing.T) {
+	router := InitTest()
+
+	request, err := http.NewRequest(http.MethodDelete, "/products/categories/1", nil)
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+}
+
+func TestDeleteProductCategoryNotFound(testing *testing.T) {
+	router := InitTest()
+
+	request, err := http.NewRequest(http.MethodDelete, "/products/categories/0", nil)
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusNotFound, response.Code)
+}
+
+func TestDeleteProductCategoryInvalidId(testing *testing.T) {
+	router := InitTest()
+
+	request, err := http.NewRequest(http.MethodDelete, "/products/categories/a", nil)
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusBadRequest, response.Code)
+}

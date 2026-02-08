@@ -58,6 +58,8 @@ func setupTestDatabase() *gorm.DB {
 
 	db.Create(&models.ProductCategory{Name: "Test product category 1", Description: "Test product category description 1"})
 	db.Create(&models.ProductCategory{Name: "Test product category 2", Description: "Test product category description 2"})
+	db.Create(&models.Product{Name: "Test product 1", Description: "Test product description 1", Price: 2.50, IsAvailable: true, CategoryID: 1})
+	db.Create(&models.Product{Name: "Test product 2", Description: "Test product description 2", Price: 4.99, IsAvailable: false, CategoryID: 2})
 
 	return db
 }
