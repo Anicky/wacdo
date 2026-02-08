@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"wacdo/models"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -36,9 +37,7 @@ func TestUserLoginSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "token")
+	assert.Contains(testing, response.Body.String(), "token")
 }
 
 func TestUserLoginInvalidUsername(testing *testing.T) {
@@ -66,9 +65,7 @@ func TestUserLoginInvalidUsername(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
 
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "Invalid email or password.")
+	assert.Contains(testing, response.Body.String(), "Invalid email or password.")
 }
 
 func TestUserLoginInvalidPassword(testing *testing.T) {
@@ -96,9 +93,7 @@ func TestUserLoginInvalidPassword(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
 
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "Invalid email or password.")
+	assert.Contains(testing, response.Body.String(), "Invalid email or password.")
 }
 
 func TestGetUsersSuccess(testing *testing.T) {
@@ -116,12 +111,18 @@ func TestGetUsersSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	body := response.Body.String()
+	results := []models.User{}
+	if err := json.NewDecoder(response.Body).Decode(&results); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "admin1@example.com")
-	assert.Contains(testing, body, "admin")
-	assert.Contains(testing, body, "greeter1@example.com")
-	assert.Contains(testing, body, "greeter")
+	assert.Equal(testing, 2, len(results))
+
+	assert.Equal(testing, "admin1@example.com", results[0].Email)
+	assert.Equal(testing, models.UserRole("admin"), results[0].Role)
+
+	assert.Equal(testing, "greeter1@example.com", results[1].Email)
+	assert.Equal(testing, models.UserRole("greeter"), results[1].Role)
 }
 
 func TestGetUsersUnauthorized(testing *testing.T) {
@@ -153,10 +154,13 @@ func TestGetUserSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	body := response.Body.String()
+	result := models.User{}
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "admin1@example.com")
-	assert.Contains(testing, body, "admin")
+	assert.Equal(testing, "admin1@example.com", result.Email)
+	assert.Equal(testing, models.UserRole("admin"), result.Role)
 }
 
 func TestGetUserUnauthorized(testing *testing.T) {
@@ -233,10 +237,13 @@ func TestPostUserSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusCreated, response.Code)
 
-	body := response.Body.String()
+	result := models.User{}
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "manager1@example.com")
-	assert.Contains(testing, body, "manager")
+	assert.Equal(testing, "manager1@example.com", result.Email)
+	assert.Equal(testing, models.UserRole("manager"), result.Role)
 }
 
 func TestPostUserEmailAlreadyUsed(testing *testing.T) {
@@ -267,9 +274,7 @@ func TestPostUserEmailAlreadyUsed(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
 
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "Email already used.")
+	assert.Contains(testing, response.Body.String(), "Email already used.")
 }
 
 func TestPostUserInvalidPassword(testing *testing.T) {
@@ -385,10 +390,13 @@ func TestPutUserSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	body := response.Body.String()
+	result := models.User{}
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "orderpicker1@example.com")
-	assert.Contains(testing, body, "order_picker")
+	assert.Equal(testing, "orderpicker1@example.com", result.Email)
+	assert.Equal(testing, models.UserRole("order_picker"), result.Role)
 }
 
 func TestPutUserSuccessWithSameEmail(testing *testing.T) {
@@ -419,10 +427,13 @@ func TestPutUserSuccessWithSameEmail(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	body := response.Body.String()
+	result := models.User{}
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "admin1@example.com")
-	assert.Contains(testing, body, "order_picker")
+	assert.Equal(testing, "admin1@example.com", result.Email)
+	assert.Equal(testing, models.UserRole("order_picker"), result.Role)
 }
 
 func TestPutUserEmailAlreadyUsed(testing *testing.T) {
@@ -453,9 +464,7 @@ func TestPutUserEmailAlreadyUsed(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
 
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "Email already used.")
+	assert.Contains(testing, response.Body.String(), "Email already used.")
 }
 
 func TestPutUserInvalidPassword(testing *testing.T) {

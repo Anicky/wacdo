@@ -16,6 +16,8 @@ import (
 	_ "wacdo/docs"
 )
 
+// @TODO: add username/password fields in swagger
+
 // @title Wacdo
 // @version 1.0
 // @description Order management application for Wacdo
@@ -50,7 +52,8 @@ func main() {
 	routes.UserRoutes(router)
 	routes.ProductCategoryRoutes(router)
 	routes.ProductRoutes(router)
-	// @TODO: add routes for menu, orders
+	routes.MenuRoutes(router)
+	// @TODO: add routes for orders
 
 	config.ConnectDB()
 

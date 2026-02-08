@@ -34,7 +34,7 @@ type UserOutput struct {
 	UpdatedAt time.Time
 }
 
-func FindUserById(context *gin.Context) (user *User, err error) {
+func FindUserByContext(context *gin.Context) (user *User, err error) {
 	idParam := context.Param("id")
 	id, err := strconv.Atoi(idParam)
 
@@ -44,6 +44,10 @@ func FindUserById(context *gin.Context) (user *User, err error) {
 		return nil, err
 	}
 
+	return FindUserById(context, uint(id))
+}
+
+func FindUserById(context *gin.Context, id uint) (user *User, err error) {
 	if err = config.DB.First(&user, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			context.JSON(http.StatusNotFound, gin.H{"error": "User not found."})

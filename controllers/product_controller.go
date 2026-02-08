@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @TODO: preload menus
+
 // GetProducts godoc
 // @Description Récupérer tous les produits
 // @Tags Products
@@ -40,7 +42,7 @@ func GetProducts(context *gin.Context) {
 // @Security BearerAuth
 // @Router /products/{id} [get]
 func GetProduct(context *gin.Context) {
-	product, err := models.FindProductById(context)
+	product, err := models.FindProductByContext(context)
 
 	if err == nil {
 		context.JSON(http.StatusOK, product)
@@ -66,37 +68,28 @@ func PostProduct(context *gin.Context) {
 		return
 	}
 
-	insert := make(map[string]interface{})
-
-	if input.Name != nil {
-		insert["name"] = *input.Name
+	productCategory, err := models.FindProductCategoryById(context, input.CategoryID)
+	if err != nil {
+		return
 	}
 
-	if input.Description != nil {
-		insert["description"] = *input.Description
-	}
-
-	if input.Price != nil {
-		insert["price"] = *input.Price
-	}
-
-	if input.IsAvailable != nil {
-		insert["isAvailable"] = *input.IsAvailable
-	}
-
-	if input.CategoryID != nil {
-		insert["categoryID"] = *input.CategoryID
+	product := models.Product{
+		Name:        input.Name,
+		Description: input.Description,
+		Price:       input.Price,
+		IsAvailable: input.IsAvailable,
+		Category:    *productCategory,
 	}
 
 	// @TODO: image
 
-	if err := config.DB.Model(models.Product{}).Create(&insert).Error; err != nil {
+	if err := config.DB.Preload("Category").Create(&product).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create product."})
 
 		return
 	}
 
-	context.JSON(http.StatusCreated, insert)
+	context.JSON(http.StatusCreated, product)
 }
 
 // PutProduct godoc
@@ -113,7 +106,7 @@ func PostProduct(context *gin.Context) {
 // @Security BearerAuth
 // @Router /products/{id} [put]
 func PutProduct(context *gin.Context) {
-	product, err := models.FindProductById(context)
+	product, err := models.FindProductByContext(context)
 
 	if err == nil {
 		var input models.ProductUpdateInput
@@ -139,6 +132,14 @@ func PutProduct(context *gin.Context) {
 
 		if input.IsAvailable != nil {
 			updates["isAvailable"] = *input.IsAvailable
+		}
+
+		var productCategory *models.ProductCategory
+		if input.CategoryID != nil {
+			productCategory, _ = models.FindProductCategoryById(context, *input.CategoryID)
+			if productCategory == nil {
+				return
+			}
 		}
 
 		path, err := utils.UploadImage(context)
@@ -172,6 +173,14 @@ func PutProduct(context *gin.Context) {
 			return
 		}
 
+		if productCategory != nil {
+			if err := config.DB.Model(&product).Association("Category").Replace(productCategory); err != nil {
+				context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to update product category."})
+
+				return
+			}
+		}
+
 		context.JSON(http.StatusOK, product)
 	}
 }
@@ -188,7 +197,9 @@ func PutProduct(context *gin.Context) {
 // @Security BearerAuth
 // @Router /products/{id} [delete]
 func DeleteProduct(context *gin.Context) {
-	product, err := models.FindProductById(context)
+	product, err := models.FindProductByContext(context)
+
+	// @TODO: soft delete?
 
 	if err == nil {
 		if err = config.DB.Delete(&product).Error; err != nil {

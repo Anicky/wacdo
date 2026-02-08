@@ -1,9 +1,879 @@
+definitions:
+  models.Menu:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      isAvailable:
+        type: boolean
+      name:
+        type: string
+      price:
+        format: float64
+        type: number
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  models.MenuUpdateInput:
+    properties:
+      description:
+        type: string
+      isAvailable:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      productsIDs:
+        items:
+          type: integer
+        type: array
+    type: object
+  models.Product:
+    properties:
+      category:
+        $ref: '#/definitions/models.ProductCategory'
+      categoryID:
+        type: integer
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      isAvailable:
+        type: boolean
+      name:
+        type: string
+      price:
+        format: float64
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  models.ProductCategory:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+    type: object
+  models.ProductCategoryUpdateInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  models.ProductUpdateInput:
+    properties:
+      categoryID:
+        type: integer
+      description:
+        type: string
+      isAvailable:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  models.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        minLength: 8
+        type: string
+      role:
+        $ref: '#/definitions/models.UserRole'
+      updatedAt:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.UserOutput:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        $ref: '#/definitions/models.UserRole'
+      updatedAt:
+        type: string
+    type: object
+  models.UserRole:
+    enum:
+    - admin
+    - greeter
+    - order_picker
+    - manager
+    type: string
+    x-enum-varnames:
+    - Admin
+    - Greeter
+    - OrderPicker
+    - Manager
+  models.UserUpdateInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/models.UserRole'
+    type: object
 info:
   contact: {}
   description: Order management application for Wacdo
   title: Wacdo
   version: "1.0"
-paths: {}
+paths:
+  /menu:
+    post:
+      consumes:
+      - application/json
+      description: Créer un nouveau menu
+      parameters:
+      - description: Données du menu
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/models.Menu'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Menu'
+        "400":
+          description: Données invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Menus
+  /menus:
+    get:
+      description: Récupérer tous les menus
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Menu'
+            type: array
+      security:
+      - BearerAuth: []
+      tags:
+      - Menus
+  /menus/{id}:
+    delete:
+      description: Supprimer un menu
+      parameters:
+      - description: ID du menu
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message de succès
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: ID invalide
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Produit non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Menus
+    get:
+      description: Récupérer un menu par son ID
+      parameters:
+      - description: ID du menu
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Menu'
+        "400":
+          description: ID invalide
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Menu non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Menus
+    put:
+      consumes:
+      - application/json
+      description: Mettre à jour un menu existant
+      parameters:
+      - description: ID du menu
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données de mise à jour
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.MenuUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Menu'
+        "400":
+          description: Données invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Produit non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Menus
+  /product:
+    post:
+      consumes:
+      - application/json
+      description: Créer un nouveau produit
+      parameters:
+      - description: Données du produit
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Données invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Products
+  /product/categories:
+    post:
+      consumes:
+      - application/json
+      description: Créer une nouvelle catégorie de produit
+      parameters:
+      - description: Données de la catégorie du produit
+        in: body
+        name: productCategory
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductCategory'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ProductCategory'
+        "400":
+          description: Données invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - ProductsCategories
+  /products:
+    get:
+      description: Récupérer tous les produits
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+      security:
+      - BearerAuth: []
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      description: Supprimer un produit
+      parameters:
+      - description: ID du produit
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message de succès
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: ID invalide
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Produit non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Products
+    get:
+      description: Récupérer un produit par son ID
+      parameters:
+      - description: ID du produit
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: ID invalide
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Produit non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Mettre à jour un produit existant
+      parameters:
+      - description: ID du produit
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données de mise à jour
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Données invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Produit non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Products
+  /products/categories:
+    get:
+      description: Récupérer toutes les catégories de produits
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ProductCategory'
+            type: array
+      security:
+      - BearerAuth: []
+      tags:
+      - ProductsCategories
+  /products/categories/{id}:
+    delete:
+      description: Supprimer une catégorie de produit
+      parameters:
+      - description: ID de la catégorie de produit
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message de succès
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: ID invalide
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Catégorie de produit non trouvée
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - ProductsCategories
+    get:
+      description: Récupérer une catégorie de produit par son ID
+      parameters:
+      - description: ID de la catégorie du produit
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ProductCategory'
+        "400":
+          description: ID invalide
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Catégorie de produit non trouvée
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - ProductsCategories
+    put:
+      consumes:
+      - application/json
+      description: Mettre à jour une catégorie de produit existante
+      parameters:
+      - description: ID de la catégorie de produit
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données de mise à jour
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductCategoryUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ProductCategory'
+        "400":
+          description: Données invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Catégorie de produit non trouvée
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - ProductsCategories
+  /users:
+    get:
+      description: Récupérer tous les utilisateurs
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      security:
+      - BearerAuth: []
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Créer un nouvel utilisateur
+      parameters:
+      - description: Données de l'utilisateur
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.UserOutput'
+        "400":
+          description: Données invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Users
+  /users/{id}:
+    delete:
+      description: Supprimer un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Pas de contenu
+        "400":
+          description: ID invalide
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Utilisateur non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Users
+    get:
+      description: Récupérer un utilisateur par son ID
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: ID invalide
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Utilisateur non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Mettre à jour un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données de l'utilisateur à mettre à jour
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserOutput'
+        "400":
+          description: Données ou ID invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Utilisateur non trouvé
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - Users
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Se connecter (pour obtenir un token JWT)
+      parameters:
+      - description: Identifiants utilisateur (email, password)
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token JWT
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Identifiants invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      tags:
+      - Users
 securityDefinitions:
   BearerAuth:
     in: header

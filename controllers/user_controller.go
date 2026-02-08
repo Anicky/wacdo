@@ -100,7 +100,7 @@ func GetUsers(context *gin.Context) {
 // @Security BearerAuth
 // @Router /users/{id} [get]
 func GetUser(context *gin.Context) {
-	user, err := models.FindUserById(context)
+	user, err := models.FindUserByContext(context)
 
 	if err == nil {
 		context.JSON(http.StatusOK, models.TransformUserToOutput(user))
@@ -173,7 +173,7 @@ func PostUser(context *gin.Context) {
 // @Security BearerAuth
 // @Router /users/{id} [put]
 func PutUser(context *gin.Context) {
-	user, err := models.FindUserById(context)
+	user, err := models.FindUserByContext(context)
 	if err == nil {
 		var input models.UserUpdateInput
 		if err := context.ShouldBindJSON(&input); err != nil {
@@ -245,7 +245,7 @@ func PutUser(context *gin.Context) {
 // @Security BearerAuth
 // @Router /users/{id} [delete]
 func DeleteUser(context *gin.Context) {
-	user, err := models.FindUserById(context)
+	user, err := models.FindUserByContext(context)
 	if err == nil {
 		if err := config.DB.Delete(&user).Error; err != nil {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete user."})
