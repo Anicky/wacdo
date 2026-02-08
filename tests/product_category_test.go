@@ -118,12 +118,12 @@ func TestGetProductCategoryInvalidId(testing *testing.T) {
 func TestPostProductCategorySuccess(testing *testing.T) {
 	router := InitTest()
 
-	product := map[string]interface{}{
+	productCategory := map[string]interface{}{
 		"name":        "Test product category 3",
 		"description": "Test product category description 3",
 	}
 
-	data, err := json.Marshal(product)
+	data, err := json.Marshal(productCategory)
 	if err != nil {
 		log.Fatal("Unable to marshal data: ", err)
 	}
@@ -151,12 +151,12 @@ func TestPostProductCategorySuccess(testing *testing.T) {
 func TestPostProductCategoryError(testing *testing.T) {
 	router := InitTest()
 
-	product := map[string]interface{}{
+	productCategory := map[string]interface{}{
 		"name":        1234,
 		"description": 1234,
 	}
 
-	data, err := json.Marshal(product)
+	data, err := json.Marshal(productCategory)
 	if err != nil {
 		log.Fatal("Unable to marshal data: ", err)
 	}
@@ -179,12 +179,12 @@ func TestPostProductCategoryError(testing *testing.T) {
 func TestPostProductCategoryUnauthorized(testing *testing.T) {
 	router := InitTest()
 
-	product := map[string]interface{}{
+	productCategory := map[string]interface{}{
 		"name":        "Test product category 3",
 		"description": "Test product category description 3",
 	}
 
-	data, err := json.Marshal(product)
+	data, err := json.Marshal(productCategory)
 	if err != nil {
 		log.Fatal("Unable to marshal data: ", err)
 	}
@@ -205,7 +205,7 @@ func TestPostProductCategoryUnauthorized(testing *testing.T) {
 func TestPutProductCategorySuccess(testing *testing.T) {
 	router := InitTest()
 
-	product := map[string]interface{}{
+	productCategory := map[string]interface{}{
 		"name":        "Test product category 1b",
 		"description": "Test product category description 1b",
 		"price":       3.29,
@@ -213,7 +213,7 @@ func TestPutProductCategorySuccess(testing *testing.T) {
 		"categoryId":  1,
 	}
 
-	data, err := json.Marshal(product)
+	data, err := json.Marshal(productCategory)
 	if err != nil {
 		log.Fatal("Unable to marshal data: ", err)
 	}
@@ -241,12 +241,12 @@ func TestPutProductCategorySuccess(testing *testing.T) {
 func TestPutProductCategoryError(testing *testing.T) {
 	router := InitTest()
 
-	product := map[string]interface{}{
+	productCategory := map[string]interface{}{
 		"name":        1234,
 		"description": 1234,
 	}
 
-	data, err := json.Marshal(product)
+	data, err := json.Marshal(productCategory)
 	if err != nil {
 		log.Fatal("Unable to marshal data: ", err)
 	}
@@ -269,12 +269,12 @@ func TestPutProductCategoryError(testing *testing.T) {
 func TestPutProductCategoryUnauthorized(testing *testing.T) {
 	router := InitTest()
 
-	product := map[string]interface{}{
+	productCategory := map[string]interface{}{
 		"name":        "Test product category 1b",
 		"description": "Test product category description 1b",
 	}
 
-	data, err := json.Marshal(product)
+	data, err := json.Marshal(productCategory)
 	if err != nil {
 		log.Fatal("Unable to marshal data: ", err)
 	}
@@ -295,12 +295,12 @@ func TestPutProductCategoryUnauthorized(testing *testing.T) {
 func TestPutProductCategoryNotFound(testing *testing.T) {
 	router := InitTest()
 
-	product := map[string]interface{}{
+	productCategory := map[string]interface{}{
 		"name":        "Test product category 1b",
 		"description": "Test product category description 1b",
 	}
 
-	data, err := json.Marshal(product)
+	data, err := json.Marshal(productCategory)
 	if err != nil {
 		log.Fatal("Unable to marshal data: ", err)
 	}
@@ -323,12 +323,12 @@ func TestPutProductCategoryNotFound(testing *testing.T) {
 func TestPutProductCategoryInvalidId(testing *testing.T) {
 	router := InitTest()
 
-	product := map[string]interface{}{
+	productCategory := map[string]interface{}{
 		"name":        "Test product category 1b",
 		"description": "Test product category description 1b",
 	}
 
-	data, err := json.Marshal(product)
+	data, err := json.Marshal(productCategory)
 	if err != nil {
 		log.Fatal("Unable to marshal data: ", err)
 	}

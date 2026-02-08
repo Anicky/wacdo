@@ -185,6 +185,15 @@ func PutUser(context *gin.Context) {
 		updates := make(map[string]interface{})
 
 		if input.Email != nil {
+			var count int64
+			config.DB.Model(&models.User{}).Where("id <> ? AND email = ?", user.ID, *input.Email).Count(&count)
+
+			if count > 0 {
+				context.JSON(http.StatusBadRequest, gin.H{"error": "Email already used."})
+
+				return
+			}
+
 			updates["email"] = *input.Email
 		}
 

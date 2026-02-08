@@ -2,8 +2,20 @@ package utils
 
 import (
 	"errors"
+	"log"
 	"regexp"
+
+	"golang.org/x/crypto/bcrypt"
 )
+
+func HashPassword(password string) string {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal("Unable to hash password: ", err)
+	}
+
+	return string(bytes)
+}
 
 func ValidatePassword(password string) error {
 	if len(password) < 8 {
