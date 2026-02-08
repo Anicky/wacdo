@@ -16,8 +16,8 @@ func UserRoutes(router *gin.Engine) {
 		// @TODO: add middleware for role (check that only admins can use these routes)
 		routesGroup.GET("/", middlewares.Authentication(), controllers.GetUsers)
 		routesGroup.GET("/:id", middlewares.Authentication(), controllers.GetUser)
-		// @TODO: add user route
-		// @TODO: edit user route
-		// @TODO: delete user route
+		routesGroup.POST("/", middlewares.Authentication(), controllers.PostUser)
+		routesGroup.PUT("/:id", middlewares.Authentication(), controllers.PutUser)
+		routesGroup.DELETE("/:id", middlewares.Authentication(), controllers.DeleteUser)
 	}
 }

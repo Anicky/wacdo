@@ -27,10 +27,7 @@ func main() {
 }
 
 func migrateSchema() {
-	err := config.DB.AutoMigrate(
-		&models.User{},
-		&models.ProductCategory{},
-	)
+	err := config.DB.AutoMigrate(&models.User{})
 	if err != nil {
 		log.Fatal("Unable to auto migrate: ", err)
 	}
@@ -41,11 +38,6 @@ func deleteTestData() {
 	var users []models.User
 	config.DB.Unscoped().Where("1 = 1").Find(&users)
 	config.DB.Unscoped().Delete(&users)
-
-	// Remove products categories
-	var productsCategories []models.ProductCategory
-	config.DB.Unscoped().Where("1 = 1").Find(&productsCategories)
-	config.DB.Unscoped().Delete(&productsCategories)
 }
 
 func createTestData() {
@@ -60,33 +52,10 @@ func createTestData() {
 	if err != nil {
 		log.Fatal("Unable to create user data: ", err)
 	}
-
-	// Create products categories
-	err = gorm.G[models.ProductCategory](config.DB).Create(ctx, &models.ProductCategory{
-		Name:        "Burgers",
-		Description: "Les burgers",
-	})
-	if err != nil {
-		log.Fatal("Unable to create product category data: ", err)
-	}
-	err = gorm.G[models.ProductCategory](config.DB).Create(ctx, &models.ProductCategory{
-		Name:        "Frites",
-		Description: "Les frites",
-	})
-	if err != nil {
-		log.Fatal("Unable to create product category data: ", err)
-	}
-	err = gorm.G[models.ProductCategory](config.DB).Create(ctx, &models.ProductCategory{
-		Name:        "Boissons",
-		Description: "Les boissons",
-	})
-	if err != nil {
-		log.Fatal("Unable to create product category data: ", err)
-	}
 }
 
 func hashPassword(password string) string {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Fatal("Unable to hash password: ", err)
 	}

@@ -44,3 +44,116 @@ func GetProductCategory(context *gin.Context) {
 		context.JSON(http.StatusOK, productCategory)
 	}
 }
+
+// PostProductCategory godoc
+// @Description Créer une nouvelle catégorie de produit
+// @Tags ProductsCategories
+// @Accept json
+// @Produce json
+// @Param productCategory body models.ProductCategory true "Données de la catégorie du produit"
+// @Success 201 {object} models.ProductCategory
+// @Failure 400 {object} map[string]string "Données invalides"
+// @Failure 500 {object} map[string]string "Erreur interne"
+// @Security BearerAuth
+// @Router /product/categories [post]
+func PostProductCategory(context *gin.Context) {
+	var input models.ProductCategoryInsertInput
+	if err := context.ShouldBindJSON(&input); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data."})
+
+		return
+	}
+
+	insert := make(map[string]interface{})
+
+	if input.Name != nil {
+		insert["name"] = *input.Name
+	}
+
+	if input.Description != nil {
+		insert["description"] = *input.Description
+	}
+
+	if err := config.DB.Model(models.ProductCategory{}).Create(&insert).Error; err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create product category."})
+
+		return
+	}
+
+	context.JSON(http.StatusCreated, insert)
+}
+
+// PutProductCategory godoc
+// @Description Mettre à jour une catégorie de produit existante
+// @Tags ProductsCategories
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la catégorie de produit"
+// @Param input body models.ProductCategoryUpdateInput true "Données de mise à jour"
+// @Success 200 {object} models.ProductCategory
+// @Failure 400 {object} map[string]string "Données invalides"
+// @Failure 404 {object} map[string]string "Catégorie de produit non trouvée"
+// @Failure 500 {object} map[string]string "Erreur interne"
+// @Security BearerAuth
+// @Router /products/categories/{id} [put]
+func PutProductCategory(context *gin.Context) {
+	productCategory, err := models.FindProductCategoryById(context)
+
+	if err == nil {
+		var input models.ProductCategoryUpdateInput
+		if err = context.ShouldBindJSON(&input); err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data."})
+
+			return
+		}
+
+		updates := make(map[string]interface{})
+
+		if input.Name != nil {
+			updates["name"] = *input.Name
+		}
+
+		if input.Description != nil {
+			updates["description"] = *input.Description
+		}
+
+		if len(updates) == 0 {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "No data to update."})
+
+			return
+		}
+
+		if err := config.DB.Model(&productCategory).Updates(updates).Error; err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to update product category."})
+
+			return
+		}
+
+		context.JSON(http.StatusOK, productCategory)
+	}
+}
+
+// DeleteProductCategory godoc
+// @Description Supprimer une catégorie de produit
+// @Tags ProductsCategories
+// @Produce json
+// @Param id path int true "ID de la catégorie de produit"
+// @Success 200 {object} map[string]string "Message de succès"
+// @Failure 400 {object} map[string]string "ID invalide"
+// @Failure 404 {object} map[string]string "Catégorie de produit non trouvée"
+// @Failure 500 {object} map[string]string "Erreur interne"
+// @Security BearerAuth
+// @Router /products/categories/{id} [delete]
+func DeleteProductCategory(context *gin.Context) {
+	productCategory, err := models.FindProductCategoryById(context)
+
+	if err == nil {
+		if err = config.DB.Delete(&productCategory).Error; err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete product category."})
+
+			return
+		}
+
+		context.JSON(http.StatusOK, gin.H{"message": "Product category deleted successfully."})
+	}
+}

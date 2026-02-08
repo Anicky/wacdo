@@ -20,6 +20,12 @@ type User struct {
 	UpdatedAt time.Time
 }
 
+type UserUpdateInput struct {
+	Email    *string   `json:"email"`
+	Password *string   `json:"password"`
+	Role     *UserRole `json:"role"`
+}
+
 type UserOutput struct {
 	ID        uint
 	Email     string

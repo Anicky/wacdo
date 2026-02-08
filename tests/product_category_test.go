@@ -112,3 +112,17 @@ func TestGetProductCategoryInvalidId(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
 }
+
+// @TODO: post success
+// @TODO: post error
+// @TODO: post unauthorized
+// @TODO: put success
+// @TODO: put error
+// @TODO: put unauthorized
+// @TODO: put not found
+// @TODO: put invalid id
+// @TODO: delete success
+// @TODO: delete error
+// @TODO: delete unauthorized
+// @TODO: delete not found
+// @TODO: delete invalid id

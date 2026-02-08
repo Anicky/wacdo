@@ -47,7 +47,11 @@ func setupTestDatabase() *gorm.DB {
 		log.Fatal("Unable to setup database: ", err)
 	}
 
-	err = db.AutoMigrate(&models.ProductCategory{}, &models.User{})
+	err = db.AutoMigrate(
+		&models.ProductCategory{},
+		&models.Product{},
+		&models.User{},
+	)
 	if err != nil {
 		log.Fatal("Unable to migrate database: ", err)
 	}

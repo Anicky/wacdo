@@ -49,7 +49,7 @@ func GetProduct(context *gin.Context) {
 
 // PostProduct godoc
 // @Description Créer un nouveau produit
-// @Tags PostProducts
+// @Tags Products
 // @Accept json
 // @Produce json
 // @Param product body models.Product true "Données du produit"
