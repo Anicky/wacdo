@@ -26,7 +26,7 @@ func GetProductsCategories(context *gin.Context) {
 	context.JSON(http.StatusOK, productsCategories)
 }
 
-// GetProduct godoc
+// GetProductCategory GetProduct godoc
 // @Description Récupérer une catégorie de produit par son ID
 // @Tags ProductsCategories
 // @Produce json
@@ -38,7 +38,7 @@ func GetProductsCategories(context *gin.Context) {
 // @Security BearerAuth
 // @Router /products/categories/{id} [get]
 func GetProductCategory(context *gin.Context) {
-	productCategory, err := models.FindProductCategoryById(context)
+	productCategory, err := models.FindProductCategoryByContext(context)
 
 	if err == nil {
 		context.JSON(http.StatusOK, productCategory)
@@ -64,23 +64,18 @@ func PostProductCategory(context *gin.Context) {
 		return
 	}
 
-	insert := make(map[string]interface{})
-
-	if input.Name != nil {
-		insert["name"] = *input.Name
+	productCategory := models.ProductCategory{
+		Name:        input.Name,
+		Description: input.Description,
 	}
 
-	if input.Description != nil {
-		insert["description"] = *input.Description
-	}
-
-	if err := config.DB.Model(models.ProductCategory{}).Create(&insert).Error; err != nil {
+	if err := config.DB.Create(&productCategory).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create product category."})
 
 		return
 	}
 
-	context.JSON(http.StatusCreated, insert)
+	context.JSON(http.StatusCreated, productCategory)
 }
 
 // PutProductCategory godoc
@@ -97,7 +92,7 @@ func PostProductCategory(context *gin.Context) {
 // @Security BearerAuth
 // @Router /products/categories/{id} [put]
 func PutProductCategory(context *gin.Context) {
-	productCategory, err := models.FindProductCategoryById(context)
+	productCategory, err := models.FindProductCategoryByContext(context)
 
 	if err == nil {
 		var input models.ProductCategoryUpdateInput
@@ -145,7 +140,7 @@ func PutProductCategory(context *gin.Context) {
 // @Security BearerAuth
 // @Router /products/categories/{id} [delete]
 func DeleteProductCategory(context *gin.Context) {
-	productCategory, err := models.FindProductCategoryById(context)
+	productCategory, err := models.FindProductCategoryByContext(context)
 
 	if err == nil {
 		if err = config.DB.Delete(&productCategory).Error; err != nil {

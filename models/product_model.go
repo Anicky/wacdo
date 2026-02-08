@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"net/http"
+	"slices"
 	"strconv"
 	"time"
 	"wacdo/config"
@@ -25,11 +26,11 @@ type Product struct {
 }
 
 type ProductInsertInput struct {
-	Name        *string  `json:"name" binding:"required"`
-	Description *string  `json:"description" binding:"required"`
-	Price       *float32 `json:"price" binding:"required"`
-	IsAvailable *bool    `json:"isAvailable" binding:"required"`
-	CategoryID  *uint    `json:"categoryID" binding:"required"`
+	Name        string  `json:"name" binding:"required"`
+	Description string  `json:"description" binding:"required"`
+	Price       float32 `json:"price" binding:"required"`
+	IsAvailable bool    `json:"isAvailable" binding:"required"`
+	CategoryID  uint    `json:"categoryID" binding:"required"`
 	// @TODO: image
 }
 
@@ -42,7 +43,7 @@ type ProductUpdateInput struct {
 	// @TODO: image
 }
 
-func FindProductById(context *gin.Context) (product *Product, err error) {
+func FindProductByContext(context *gin.Context) (product *Product, err error) {
 	idParam := context.Param("id")
 	id, err := strconv.Atoi(idParam)
 
@@ -52,7 +53,11 @@ func FindProductById(context *gin.Context) (product *Product, err error) {
 		return nil, err
 	}
 
-	if err = config.DB.First(&product, id).Error; err != nil {
+	return FindProductById(uint(id), context)
+}
+
+func FindProductById(id uint, context *gin.Context) (product *Product, err error) {
+	if err = config.DB.Preload("Category").First(&product, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			context.JSON(http.StatusNotFound, gin.H{"error": "Product not found."})
 
@@ -65,4 +70,36 @@ func FindProductById(context *gin.Context) (product *Product, err error) {
 	}
 
 	return product, nil
+}
+
+func FindProductsById(context *gin.Context, productsIDs []uint) (products []Product, err error) {
+	if err = config.DB.Find(&products, productsIDs).Error; err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch products."})
+
+		return nil, err
+	}
+
+	if (len(products)) != len(productsIDs) {
+		missingProducts := make([]uint, 0)
+
+		foundProductsIds := make([]uint, 0)
+		for _, product := range products {
+			foundProductsIds = append(foundProductsIds, product.ID)
+		}
+
+		for _, productID := range productsIDs {
+			if slices.Contains(foundProductsIds, productID) == false {
+				missingProducts = append(missingProducts, productID)
+			}
+		}
+
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"error":            "Unable to find products.",
+			"missing products": missingProducts,
+		})
+
+		return nil, nil
+	}
+
+	return products, nil
 }
