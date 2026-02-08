@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"wacdo/models"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -26,12 +27,18 @@ func TestGetProductCategoriesSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	body := response.Body.String()
+	results := []models.ProductCategory{}
+	if err := json.NewDecoder(response.Body).Decode(&results); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "Test product category 1")
-	assert.Contains(testing, body, "Test product category description 1")
-	assert.Contains(testing, body, "Test product category 2")
-	assert.Contains(testing, body, "Test product category description 2")
+	assert.Equal(testing, 2, len(results))
+
+	assert.Equal(testing, "Test product category 1", results[0].Name)
+	assert.Equal(testing, "Test product category description 1", results[0].Description)
+
+	assert.Equal(testing, "Test product category 2", results[1].Name)
+	assert.Equal(testing, "Test product category description 2", results[1].Description)
 }
 
 func TestGetProductCategoriesUnauthorized(testing *testing.T) {
@@ -63,10 +70,13 @@ func TestGetProductCategorySuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	body := response.Body.String()
+	result := models.ProductCategory{}
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "Test product category 1")
-	assert.Contains(testing, body, "Test product category description 1")
+	assert.Equal(testing, "Test product category 1", result.Name)
+	assert.Equal(testing, "Test product category description 1", result.Description)
 }
 
 func TestGetProductCategoryUnauthorized(testing *testing.T) {
@@ -142,10 +152,13 @@ func TestPostProductCategorySuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusCreated, response.Code)
 
-	body := response.Body.String()
+	result := models.ProductCategory{}
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "Test product category 3")
-	assert.Contains(testing, body, "Test product category description 3")
+	assert.Equal(testing, "Test product category 3", result.Name)
+	assert.Equal(testing, "Test product category description 3", result.Description)
 }
 
 func TestPostProductCategoryError(testing *testing.T) {
@@ -232,10 +245,13 @@ func TestPutProductCategorySuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	body := response.Body.String()
+	result := models.ProductCategory{}
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		log.Fatal("Unable to decode JSON: ", err)
+	}
 
-	assert.Contains(testing, body, "Test product category 1b")
-	assert.Contains(testing, body, "Test product category description 1b")
+	assert.Equal(testing, "Test product category 1b", result.Name)
+	assert.Equal(testing, "Test product category description 1b", result.Description)
 }
 
 func TestPutProductCategoryError(testing *testing.T) {
@@ -409,3 +425,5 @@ func TestDeleteProductCategoryInvalidId(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
 }
+
+// @TODO: test remove product category with products associated

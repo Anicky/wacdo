@@ -18,8 +18,8 @@ type ProductCategory struct {
 }
 
 type ProductCategoryInsertInput struct {
-	Name        *string `json:"name" binding:"required"`
-	Description *string `json:"description" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description" binding:"required"`
 }
 
 type ProductCategoryUpdateInput struct {
@@ -27,7 +27,7 @@ type ProductCategoryUpdateInput struct {
 	Description *string `json:"description"`
 }
 
-func FindProductCategoryById(context *gin.Context) (productCategory *ProductCategory, err error) {
+func FindProductCategoryByContext(context *gin.Context) (productCategory *ProductCategory, err error) {
 	idParam := context.Param("id")
 	id, err := strconv.Atoi(idParam)
 
@@ -37,6 +37,10 @@ func FindProductCategoryById(context *gin.Context) (productCategory *ProductCate
 		return nil, err
 	}
 
+	return FindProductCategoryById(context, uint(id))
+}
+
+func FindProductCategoryById(context *gin.Context, id uint) (productCategory *ProductCategory, err error) {
 	if err = config.DB.First(&productCategory, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			context.JSON(http.StatusNotFound, gin.H{"error": "Product category not found."})
