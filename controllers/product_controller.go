@@ -10,8 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @TODO: preload menus
-
 // GetProducts godoc
 // @Description Récupérer tous les produits
 // @Tags Products
@@ -199,9 +197,13 @@ func PutProduct(context *gin.Context) {
 func DeleteProduct(context *gin.Context) {
 	product, err := models.FindProductByContext(context)
 
-	// @TODO: soft delete?
-
 	if err == nil {
+		if (product.Menus != nil) && (len(product.Menus) > 0) {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "Cannot delete product: there are menus associated with it."})
+
+			return
+		}
+
 		if err = config.DB.Delete(&product).Error; err != nil {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete product."})
 

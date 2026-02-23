@@ -1,10 +1,10 @@
 package models
 
-type OrderStatus int64
+type OrderStatus string
 
 const (
-	Created       OrderStatus = 0
-	InPreparation OrderStatus = 1
-	Prepared      OrderStatus = 2
-	Delivered     OrderStatus = 3
+	Created       OrderStatus = "created"
+	InPreparation OrderStatus = "inPreparation"
+	Prepared      OrderStatus = "prepared"
+	Delivered     OrderStatus = "delivered"
 )

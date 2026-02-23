@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -57,12 +58,12 @@ func FindMenuByContext(context *gin.Context) (menu *Menu, err error) {
 func FindMenuById(context *gin.Context, id uint) (menu *Menu, err error) {
 	if err = config.DB.Preload("Products").First(&menu, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			context.JSON(http.StatusNotFound, gin.H{"error": "Menu not found."})
+			context.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Menu %d: item not found.", id)})
 
 			return nil, err
 		}
 
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch menu."})
+		context.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Menu %d: unable to fetch item.", id)})
 
 		return nil, err
 	}

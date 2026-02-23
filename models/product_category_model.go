@@ -41,7 +41,7 @@ func FindProductCategoryByContext(context *gin.Context) (productCategory *Produc
 }
 
 func FindProductCategoryById(context *gin.Context, id uint) (productCategory *ProductCategory, err error) {
-	if err = config.DB.First(&productCategory, id).Error; err != nil {
+	if err = config.DB.Preload("Products").First(&productCategory, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			context.JSON(http.StatusNotFound, gin.H{"error": "Product category not found."})
 

@@ -27,18 +27,21 @@ func TestGetProductCategoriesSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	results := []models.ProductCategory{}
+	var results []models.ProductCategory
 	if err := json.NewDecoder(response.Body).Decode(&results); err != nil {
 		log.Fatal("Unable to decode JSON: ", err)
 	}
 
-	assert.Equal(testing, 2, len(results))
+	assert.Equal(testing, 3, len(results))
 
 	assert.Equal(testing, "Test product category 1", results[0].Name)
 	assert.Equal(testing, "Test product category description 1", results[0].Description)
 
 	assert.Equal(testing, "Test product category 2", results[1].Name)
 	assert.Equal(testing, "Test product category description 2", results[1].Description)
+
+	assert.Equal(testing, "Test product category 3", results[2].Name)
+	assert.Equal(testing, "Test product category description 3", results[2].Description)
 }
 
 func TestGetProductCategoriesUnauthorized(testing *testing.T) {
@@ -53,6 +56,11 @@ func TestGetProductCategoriesUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestGetProductCategorySuccess(testing *testing.T) {
@@ -91,6 +99,11 @@ func TestGetProductCategoryUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestGetProductCategoryNotFound(testing *testing.T) {
@@ -107,6 +120,11 @@ func TestGetProductCategoryNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Product category not found.")
 }
 
 func TestGetProductCategoryInvalidId(testing *testing.T) {
@@ -123,14 +141,19 @@ func TestGetProductCategoryInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
 }
 
 func TestPostProductCategorySuccess(testing *testing.T) {
 	router := InitTest()
 
 	productCategory := map[string]interface{}{
-		"name":        "Test product category 3",
-		"description": "Test product category description 3",
+		"name":        "Test product category 4",
+		"description": "Test product category description 4",
 	}
 
 	data, err := json.Marshal(productCategory)
@@ -157,8 +180,8 @@ func TestPostProductCategorySuccess(testing *testing.T) {
 		log.Fatal("Unable to decode JSON: ", err)
 	}
 
-	assert.Equal(testing, "Test product category 3", result.Name)
-	assert.Equal(testing, "Test product category description 3", result.Description)
+	assert.Equal(testing, "Test product category 4", result.Name)
+	assert.Equal(testing, "Test product category description 4", result.Description)
 }
 
 func TestPostProductCategoryError(testing *testing.T) {
@@ -193,8 +216,8 @@ func TestPostProductCategoryUnauthorized(testing *testing.T) {
 	router := InitTest()
 
 	productCategory := map[string]interface{}{
-		"name":        "Test product category 3",
-		"description": "Test product category description 3",
+		"name":        "Test product category 4",
+		"description": "Test product category description 4",
 	}
 
 	data, err := json.Marshal(productCategory)
@@ -213,6 +236,11 @@ func TestPostProductCategoryUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestPutProductCategorySuccess(testing *testing.T) {
@@ -306,6 +334,11 @@ func TestPutProductCategoryUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestPutProductCategoryNotFound(testing *testing.T) {
@@ -334,6 +367,11 @@ func TestPutProductCategoryNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Product category not found.")
 }
 
 func TestPutProductCategoryInvalidId(testing *testing.T) {
@@ -362,9 +400,30 @@ func TestPutProductCategoryInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
 }
 
 func TestDeleteProductCategorySuccess(testing *testing.T) {
+	router := InitTest()
+
+	request, err := http.NewRequest(http.MethodDelete, "/products/categories/3", nil)
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	AuthenticateUser(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusOK, response.Code)
+}
+
+func TestDeleteProductCategoryErrorAssociatedProducts(testing *testing.T) {
 	router := InitTest()
 
 	request, err := http.NewRequest(http.MethodDelete, "/products/categories/1", nil)
@@ -377,7 +436,12 @@ func TestDeleteProductCategorySuccess(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusOK, response.Code)
+	assert.Equal(testing, http.StatusBadRequest, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Cannot delete product category: there are products associated with it.")
 }
 
 func TestDeleteProductCategoryUnauthorized(testing *testing.T) {
@@ -392,6 +456,11 @@ func TestDeleteProductCategoryUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestDeleteProductCategoryNotFound(testing *testing.T) {
@@ -408,6 +477,11 @@ func TestDeleteProductCategoryNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Product category not found.")
 }
 
 func TestDeleteProductCategoryInvalidId(testing *testing.T) {
@@ -424,6 +498,9 @@ func TestDeleteProductCategoryInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
-}
 
-// @TODO: test remove product category with products associated
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
+}

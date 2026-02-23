@@ -27,7 +27,7 @@ func TestGetMenusSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	results := []models.Menu{}
+	var results []models.Menu
 	if err := json.NewDecoder(response.Body).Decode(&results); err != nil {
 		log.Fatal("Unable to decode JSON: ", err)
 	}
@@ -75,6 +75,11 @@ func TestGetMenusUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestGetMenuSuccess(testing *testing.T) {
@@ -124,6 +129,11 @@ func TestGetMenuUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestGetMenuNotFound(testing *testing.T) {
@@ -140,6 +150,11 @@ func TestGetMenuNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Menu 0: item not found.")
 }
 
 func TestGetMenuInvalidId(testing *testing.T) {
@@ -156,6 +171,11 @@ func TestGetMenuInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
 }
 
 func TestPostMenuSuccess(testing *testing.T) {
@@ -304,6 +324,11 @@ func TestPostMenuUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestPutMenuSuccess(testing *testing.T) {
@@ -448,6 +473,11 @@ func TestPutMenuUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestPutMenuNotFound(testing *testing.T) {
@@ -479,6 +509,11 @@ func TestPutMenuNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Menu 0: item not found.")
 }
 
 func TestPutMenuInvalidId(testing *testing.T) {
@@ -510,6 +545,11 @@ func TestPutMenuInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
 }
 
 func TestDeleteMenuSuccess(testing *testing.T) {
@@ -540,6 +580,11 @@ func TestDeleteMenuUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestDeleteMenuNotFound(testing *testing.T) {
@@ -556,6 +601,11 @@ func TestDeleteMenuNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Menu 0: item not found.")
 }
 
 func TestDeleteMenuInvalidId(testing *testing.T) {
@@ -572,6 +622,9 @@ func TestDeleteMenuInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
-}
 
-// @TODO: test remove menu with products associated
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
+}

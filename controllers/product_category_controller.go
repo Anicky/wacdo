@@ -143,6 +143,12 @@ func DeleteProductCategory(context *gin.Context) {
 	productCategory, err := models.FindProductCategoryByContext(context)
 
 	if err == nil {
+		if (productCategory.Products != nil) && (len(productCategory.Products) > 0) {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "Cannot delete product category: there are products associated with it."})
+
+			return
+		}
+
 		if err = config.DB.Delete(&productCategory).Error; err != nil {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete product category."})
 

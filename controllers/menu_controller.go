@@ -158,7 +158,7 @@ func PutMenu(context *gin.Context) {
 			}
 		}
 
-		if len(updates) == 0 {
+		if len(updates) == 0 && products == nil {
 			context.JSON(http.StatusBadRequest, gin.H{"error": "No data to update."})
 
 			return

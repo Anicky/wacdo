@@ -53,7 +53,7 @@ func main() {
 	routes.ProductCategoryRoutes(router)
 	routes.ProductRoutes(router)
 	routes.MenuRoutes(router)
-	// @TODO: add routes for orders
+	routes.OrderRoutes(router)
 
 	config.ConnectDB()
 

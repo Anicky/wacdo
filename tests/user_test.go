@@ -111,18 +111,21 @@ func TestGetUsersSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	results := []models.User{}
+	var results []models.User
 	if err := json.NewDecoder(response.Body).Decode(&results); err != nil {
 		log.Fatal("Unable to decode JSON: ", err)
 	}
 
-	assert.Equal(testing, 2, len(results))
+	assert.Equal(testing, 3, len(results))
 
 	assert.Equal(testing, "admin1@example.com", results[0].Email)
 	assert.Equal(testing, models.UserRole("admin"), results[0].Role)
 
 	assert.Equal(testing, "greeter1@example.com", results[1].Email)
 	assert.Equal(testing, models.UserRole("greeter"), results[1].Role)
+
+	assert.Equal(testing, "greeter2@example.com", results[2].Email)
+	assert.Equal(testing, models.UserRole("greeter"), results[2].Role)
 }
 
 func TestGetUsersUnauthorized(testing *testing.T) {
@@ -137,6 +140,11 @@ func TestGetUsersUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestGetUserSuccess(testing *testing.T) {
@@ -175,6 +183,11 @@ func TestGetUserUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestGetUserNotFound(testing *testing.T) {
@@ -191,6 +204,11 @@ func TestGetUserNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "User not found.")
 }
 
 func TestGetUserInvalidId(testing *testing.T) {
@@ -207,6 +225,11 @@ func TestGetUserInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
 }
 
 func TestPostUserSuccess(testing *testing.T) {
@@ -360,6 +383,11 @@ func TestPostUserUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestPutUserSuccess(testing *testing.T) {
@@ -550,6 +578,11 @@ func TestPutUserUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestPutUserNotFound(testing *testing.T) {
@@ -579,6 +612,11 @@ func TestPutUserNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "User not found.")
 }
 
 func TestPutUserInvalidId(testing *testing.T) {
@@ -608,6 +646,11 @@ func TestPutUserInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
 }
 
 func TestDeleteUserSuccess(testing *testing.T) {
@@ -638,6 +681,11 @@ func TestDeleteUserUnauthorized(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
 }
 
 func TestDeleteUserNotFound(testing *testing.T) {
@@ -654,6 +702,11 @@ func TestDeleteUserNotFound(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusNotFound, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "User not found.")
 }
 
 func TestDeleteUserInvalidId(testing *testing.T) {
@@ -670,4 +723,9 @@ func TestDeleteUserInvalidId(testing *testing.T) {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Invalid ID.")
 }

@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"slices"
 	"strconv"
@@ -21,6 +22,7 @@ type Product struct {
 	IsAvailable bool
 	CategoryID  uint
 	Category    ProductCategory `gorm:"foreignKey:CategoryID"`
+	Menus       []Menu          `gorm:"many2many:menu_products"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -57,14 +59,14 @@ func FindProductByContext(context *gin.Context) (product *Product, err error) {
 }
 
 func FindProductById(context *gin.Context, id uint) (product *Product, err error) {
-	if err = config.DB.Preload("Category").First(&product, id).Error; err != nil {
+	if err = config.DB.Preload("Category").Preload("Menus").First(&product, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			context.JSON(http.StatusNotFound, gin.H{"error": "Product not found."})
+			context.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Product %d: item not found.", id)})
 
 			return nil, err
 		}
 
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch product."})
+		context.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Product %d: unable to fetch item.", id)})
 
 		return nil, err
 	}
