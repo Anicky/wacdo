@@ -38,10 +38,14 @@ func InitTest() *gin.Engine {
 	return router
 }
 
-func AuthenticateUser(request *http.Request) {
-	token := generateTestToken(1)
+func AuthenticateUser(request *http.Request, userID uint) {
+	token := generateTestToken(userID)
 
 	request.Header.Set("Authorization", "Bearer "+token)
+}
+
+func AuthenticateUserAsAdmin(request *http.Request) {
+	AuthenticateUser(request, 1)
 }
 
 func setupTestDatabase() *gorm.DB {
@@ -96,6 +100,8 @@ func setupTestDatabase() *gorm.DB {
 
 	userGreeter2 := &models.User{Email: "greeter2@example.com", Password: utils.HashPassword("Greeter5678!"), Role: "greeter"}
 	db.Create(userGreeter2)
+
+	db.Create(&models.User{Email: "orderpicker1@example.com", Password: utils.HashPassword("OrderPicker1234!"), Role: "order_picker"})
 
 	// Orders
 	orderItem1 := &models.OrderItem{Quantity: 2, OrderContentName: product1.Name, OrderContentDescription: product1.Description, OrderContentImage: product1.Image, OrderContentPrice: product1.Price}

@@ -79,7 +79,7 @@ func PostMenu(context *gin.Context) {
 		Products:    *products,
 	}
 
-	// @TODO: image
+	// @TODO: image Cloudinari
 
 	if err := config.DB.Create(&menu).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create menu."})

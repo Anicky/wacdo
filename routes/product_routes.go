@@ -3,6 +3,7 @@ package routes
 import (
 	"wacdo/controllers"
 	"wacdo/middlewares"
+	"wacdo/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,12 +14,10 @@ func ProductRoutes(router *gin.Engine) {
 	routesGroup.Use(middlewares.Authentication())
 
 	{
-		routesGroup.GET("/", middlewares.Authentication(), controllers.GetProducts)
-		routesGroup.GET("/:id", middlewares.Authentication(), controllers.GetProduct)
-
-		// @TODO: add middleware for role (check that only admins can use these routes)
-		routesGroup.POST("/", controllers.PostProduct)
-		routesGroup.PUT("/:id", controllers.PutProduct)
-		routesGroup.DELETE("/:id", controllers.DeleteProduct)
+		routesGroup.GET("/", controllers.GetProducts)
+		routesGroup.GET("/:id", controllers.GetProduct)
+		routesGroup.POST("/", middlewares.CheckRole([]models.UserRole{models.Admin}), controllers.PostProduct)
+		routesGroup.PUT("/:id", middlewares.CheckRole([]models.UserRole{models.Admin}), controllers.PutProduct)
+		routesGroup.DELETE("/:id", middlewares.CheckRole([]models.UserRole{models.Admin}), controllers.DeleteProduct)
 	}
 }

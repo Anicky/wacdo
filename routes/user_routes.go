@@ -3,6 +3,7 @@ package routes
 import (
 	"wacdo/controllers"
 	"wacdo/middlewares"
+	"wacdo/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,12 +13,10 @@ func UserRoutes(router *gin.Engine) {
 
 	{
 		routesGroup.POST("/login", controllers.Login)
-
-		// @TODO: add middleware for role (check that only admins can use these routes)
-		routesGroup.GET("/", middlewares.Authentication(), controllers.GetUsers)
-		routesGroup.GET("/:id", middlewares.Authentication(), controllers.GetUser)
-		routesGroup.POST("/", middlewares.Authentication(), controllers.PostUser)
-		routesGroup.PUT("/:id", middlewares.Authentication(), controllers.PutUser)
-		routesGroup.DELETE("/:id", middlewares.Authentication(), controllers.DeleteUser)
+		routesGroup.GET("/", middlewares.Authentication(), middlewares.CheckRole([]models.UserRole{models.Admin}), controllers.GetUsers)
+		routesGroup.GET("/:id", middlewares.Authentication(), middlewares.CheckRole([]models.UserRole{models.Admin}), controllers.GetUser)
+		routesGroup.POST("/", middlewares.Authentication(), middlewares.CheckRole([]models.UserRole{models.Admin}), controllers.PostUser)
+		routesGroup.PUT("/:id", middlewares.Authentication(), middlewares.CheckRole([]models.UserRole{models.Admin}), controllers.PutUser)
+		routesGroup.DELETE("/:id", middlewares.Authentication(), middlewares.CheckRole([]models.UserRole{models.Admin}), controllers.DeleteUser)
 	}
 }

@@ -9,6 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @TODO: calculer prix total
+// @TODO: revoir format float prix (indiquer nombre décimales)
+
 // GetOrders godoc
 // @Description Récupérer toutes les commandes
 // @Tags Orders
