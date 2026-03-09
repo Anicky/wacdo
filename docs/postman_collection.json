@@ -773,13 +773,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{domainUrl}}/orders/19",
+              "raw": "{{domainUrl}}/orders/20",
               "host": [
                 "{{domainUrl}}"
               ],
               "path": [
                 "orders",
-                "19"
+                "20"
               ]
             }
           },
@@ -808,7 +808,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"ticketNumber\": \"1\",\r\n    \"items\": [\r\n        {\r\n            \"quantity\": 0\r\n        }\r\n    ]\r\n}",
+              "raw": "{\r\n    \"ticketNumber\": \"1\",\r\n    \"items\": [\r\n        {\r\n            \"productId\": 19,\r\n            \"quantity\": 2\r\n        },\r\n        {\r\n            \"menuId\": 16,\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -844,7 +844,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"status\": \"inPreparation\"\r\n}",
+              "raw": "{\r\n    \"ticketNumber\": \"2\",\r\n    \"items\": [\r\n        {\r\n            \"productId\": 19,\r\n            \"quantity\": 2\r\n        },\r\n        {\r\n            \"menuId\": 16,\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -852,13 +852,13 @@
               }
             },
             "url": {
-              "raw": "{{domainUrl}}/orders/1",
+              "raw": "{{domainUrl}}/orders/28",
               "host": [
                 "{{domainUrl}}"
               ],
               "path": [
                 "orders",
-                "1"
+                "28"
               ]
             }
           },
