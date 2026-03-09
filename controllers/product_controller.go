@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"os"
 	"wacdo/config"
 	"wacdo/models"
 	"wacdo/utils"
@@ -52,7 +51,7 @@ func GetProduct(context *gin.Context) {
 // @Tags Products
 // @Accept json
 // @Produce json
-// @Param product body models.Product true "Données du produit"
+// @Param product body models.ProductInsertInput true "Données du produit"
 // @Success 201 {object} models.Product
 // @Failure 400 {object} map[string]string "Données invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"
@@ -66,7 +65,7 @@ func PostProduct(context *gin.Context) {
 		return
 	}
 
-	productCategory, err := models.FindProductCategoryById(context, input.CategoryID)
+	productCategory, err := models.FindProductCategoryById(context, input.CategoryID, false)
 	if err != nil {
 		return
 	}
@@ -79,9 +78,16 @@ func PostProduct(context *gin.Context) {
 		Category:    *productCategory,
 	}
 
-	// @TODO: image
+	if input.Image != "" {
+		image, err := utils.UploadBase64Image(context, input.Image)
+		if err != nil {
+			return
+		}
 
-	if err := config.DB.Preload("Category").Create(&product).Error; err != nil {
+		product.Image = *image
+	}
+
+	if err := config.DB.Create(&product).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create product."})
 
 		return
@@ -134,29 +140,19 @@ func PutProduct(context *gin.Context) {
 
 		var productCategory *models.ProductCategory
 		if input.CategoryID != nil {
-			productCategory, _ = models.FindProductCategoryById(context, *input.CategoryID)
+			productCategory, _ = models.FindProductCategoryById(context, *input.CategoryID, false)
 			if productCategory == nil {
 				return
 			}
 		}
 
-		path, err := utils.UploadImage(context)
-		if err != nil {
-			return
-		}
-
-		if path != nil {
-			if product.Image != "" {
-				err = os.Remove(product.Image)
-
-				if err != nil {
-					context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete old image."})
-
-					return
-				}
+		if input.Image != nil {
+			image, err := utils.UploadBase64Image(context, *input.Image)
+			if err != nil {
+				return
 			}
 
-			updates["image"] = *path
+			updates["Image"] = *image
 		}
 
 		if len(updates) == 0 {

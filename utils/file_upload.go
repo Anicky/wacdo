@@ -2,33 +2,39 @@ package utils
 
 import (
 	"net/http"
+	"os"
 
-	"github.com/disintegration/imaging"
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/gin-gonic/gin"
 )
 
-func UploadImage(context *gin.Context) (*string, error) {
-	file, err := context.FormFile("image")
+func UploadBase64Image(context *gin.Context, base64ImageData string) (*string, error) {
+	cloudinaryInstance, err := getCloudinaryInstance(context)
 
-	if err == nil {
-		path := "uploads/" + file.Filename
-		if err := context.SaveUploadedFile(file, path); err != nil {
+	if cloudinaryInstance != nil {
+		response, err := cloudinaryInstance.Upload.Upload(context, base64ImageData, uploader.UploadParams{})
+
+		if err != nil {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to upload image."})
 
 			return nil, err
 		}
 
-		img, _ := imaging.Open(path)
-
-		resized := imaging.Resize(img, 800, 0, imaging.Lanczos)
-		if err := imaging.Save(resized, path); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to resize image."})
-
-			return nil, err
-		}
-
-		return &path, nil
+		return &response.SecureURL, nil
 	}
 
-	return nil, nil
+	return nil, err
+}
+
+func getCloudinaryInstance(context *gin.Context) (*cloudinary.Cloudinary, error) {
+	cloudinaryInstance, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to contact image server."})
+
+		return nil, err
+	}
+
+	return cloudinaryInstance, err
 }

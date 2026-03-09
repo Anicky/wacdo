@@ -50,7 +50,7 @@ func GetProductCategory(context *gin.Context) {
 // @Tags ProductsCategories
 // @Accept json
 // @Produce json
-// @Param productCategory body models.ProductCategory true "Données de la catégorie du produit"
+// @Param productCategory body models.ProductCategoryInsertInput true "Données de la catégorie du produit"
 // @Success 201 {object} models.ProductCategory
 // @Failure 400 {object} map[string]string "Données invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"

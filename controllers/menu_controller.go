@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"os"
 	"wacdo/config"
 	"wacdo/models"
 	"wacdo/utils"
@@ -52,7 +51,7 @@ func GetMenu(context *gin.Context) {
 // @Tags Menus
 // @Accept json
 // @Produce json
-// @Param menu body models.Menu true "Données du menu"
+// @Param menu body models.MenuInsertInput true "Données du menu"
 // @Success 201 {object} models.Menu
 // @Failure 400 {object} map[string]string "Données invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"
@@ -79,7 +78,14 @@ func PostMenu(context *gin.Context) {
 		Products:    *products,
 	}
 
-	// @TODO: image Cloudinari
+	if input.Image != "" {
+		image, err := utils.UploadBase64Image(context, input.Image)
+		if err != nil {
+			return
+		}
+
+		menu.Image = *image
+	}
 
 	if err := config.DB.Create(&menu).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create menu."})
@@ -131,31 +137,21 @@ func PutMenu(context *gin.Context) {
 			updates["isAvailable"] = *input.IsAvailable
 		}
 
-		path, err := utils.UploadImage(context)
-		if err != nil {
-			return
-		}
-
-		if path != nil {
-			if menu.Image != "" {
-				err = os.Remove(menu.Image)
-
-				if err != nil {
-					context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete old image."})
-
-					return
-				}
-			}
-
-			updates["image"] = *path
-		}
-
 		var products *[]models.Product
 		if input.ProductsIDs != nil {
 			products, _ = models.FindProductsById(context, *input.ProductsIDs)
 			if products == nil {
 				return
 			}
+		}
+
+		if input.Image != nil {
+			image, err := utils.UploadBase64Image(context, *input.Image)
+			if err != nil {
+				return
+			}
+
+			updates["Image"] = *image
 		}
 
 		if len(updates) == 0 && products == nil {

@@ -23,9 +23,34 @@ definitions:
       updatedAt:
         type: string
     type: object
+  models.MenuInsertInput:
+    properties:
+      description:
+        type: string
+      image:
+        type: string
+      isAvailable:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      productsIDs:
+        items:
+          type: integer
+        type: array
+    required:
+    - description
+    - isAvailable
+    - name
+    - price
+    - productsIDs
+    type: object
   models.MenuUpdateInput:
     properties:
       description:
+        type: string
+      image:
         type: string
       isAvailable:
         type: boolean
@@ -63,6 +88,19 @@ definitions:
     required:
     - status
     - user
+    type: object
+  models.OrderInsertInput:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/models.OrderItemInput'
+        minItems: 1
+        type: array
+      ticketNumber:
+        type: string
+    required:
+    - items
+    - ticketNumber
     type: object
   models.OrderItem:
     properties:
@@ -157,6 +195,16 @@ definitions:
           $ref: '#/definitions/models.Product'
         type: array
     type: object
+  models.ProductCategoryInsertInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - description
+    - name
+    type: object
   models.ProductCategoryUpdateInput:
     properties:
       description:
@@ -164,11 +212,34 @@ definitions:
       name:
         type: string
     type: object
+  models.ProductInsertInput:
+    properties:
+      categoryID:
+        type: integer
+      description:
+        type: string
+      image:
+        type: string
+      isAvailable:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+    required:
+    - categoryID
+    - description
+    - isAvailable
+    - name
+    - price
+    type: object
   models.ProductUpdateInput:
     properties:
       categoryID:
         type: integer
       description:
+        type: string
+      image:
         type: string
       isAvailable:
         type: boolean
@@ -247,7 +318,7 @@ paths:
         name: menu
         required: true
         schema:
-          $ref: '#/definitions/models.Menu'
+          $ref: '#/definitions/models.MenuInsertInput'
       produces:
       - application/json
       responses:
@@ -420,7 +491,7 @@ paths:
         name: order
         required: true
         schema:
-          $ref: '#/definitions/models.Order'
+          $ref: '#/definitions/models.OrderInsertInput'
       produces:
       - application/json
       responses:
@@ -674,7 +745,7 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/models.Product'
+          $ref: '#/definitions/models.ProductInsertInput'
       produces:
       - application/json
       responses:
@@ -709,7 +780,7 @@ paths:
         name: productCategory
         required: true
         schema:
-          $ref: '#/definitions/models.ProductCategory'
+          $ref: '#/definitions/models.ProductCategoryInsertInput'
       produces:
       - application/json
       responses:

@@ -51,7 +51,7 @@ func GetOrder(context *gin.Context) {
 // @Tags Orders
 // @Accept json
 // @Produce json
-// @Param order body models.Order true "Données de la commande"
+// @Param order body models.OrderInsertInput true "Données de la commande"
 // @Success 201 {object} models.Order
 // @Failure 400 {object} map[string]string "Données invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"

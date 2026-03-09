@@ -37,11 +37,16 @@ func FindProductCategoryByContext(context *gin.Context) (productCategory *Produc
 		return nil, err
 	}
 
-	return FindProductCategoryById(context, uint(id))
+	return FindProductCategoryById(context, uint(id), true)
 }
 
-func FindProductCategoryById(context *gin.Context, id uint) (productCategory *ProductCategory, err error) {
-	if err = config.DB.Preload("Products").First(&productCategory, id).Error; err != nil {
+func FindProductCategoryById(context *gin.Context, id uint, productsPreload bool) (productCategory *ProductCategory, err error) {
+	query := config.DB
+	if productsPreload {
+		query = query.Preload("Products")
+	}
+
+	if err = query.First(&productCategory, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			context.JSON(http.StatusNotFound, gin.H{"error": "Product category not found."})
 

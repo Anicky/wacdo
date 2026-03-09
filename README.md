@@ -7,7 +7,7 @@ Une plateforme de gestion de commandes pour Wacdo, une enseigne fictive de resta
 ### Prérequis
 
 - **Go** (>= 1.25.0)
-- **PostgresL**
+- **PostgresSQL**
 
 ### Configuration des variables d'environnement
 
@@ -30,4 +30,4 @@ Une fois le serveur lancé, vous pouvez accéder à la documentation Swagger à 
 
 ### Postman
 
-Vous pouvez importer la collection Postman en utilisant le fichier `postman_collection.json` placé à la racine du projet.
+Vous pouvez importer la collection Postman en utilisant le fichier `postman_collection.json` placé dans le dossier `docs` du projet.

@@ -33,7 +33,7 @@ type ProductInsertInput struct {
 	Price       float64 `json:"price" binding:"required"`
 	IsAvailable bool    `json:"isAvailable" binding:"required"`
 	CategoryID  uint    `json:"categoryID" binding:"required"`
-	// @TODO: image
+	Image       string  `json:"image"`
 }
 
 type ProductUpdateInput struct {
@@ -42,7 +42,7 @@ type ProductUpdateInput struct {
 	Price       *float64 `json:"price"`
 	IsAvailable *bool    `json:"isAvailable"`
 	CategoryID  *uint    `json:"categoryID"`
-	// @TODO: image
+	Image       *string  `json:"image"`
 }
 
 func FindProductByContext(context *gin.Context) (product *Product, err error) {

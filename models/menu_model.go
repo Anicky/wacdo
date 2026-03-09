@@ -30,7 +30,7 @@ type MenuInsertInput struct {
 	Price       float64 `json:"price" binding:"required"`
 	IsAvailable bool    `json:"isAvailable" binding:"required"`
 	ProductsIDs []uint  `json:"productsIDs" binding:"required"`
-	// @TODO: image
+	Image       string  `json:"image"`
 }
 
 type MenuUpdateInput struct {
@@ -39,7 +39,7 @@ type MenuUpdateInput struct {
 	Price       *float64 `json:"price"`
 	IsAvailable *bool    `json:"isAvailable"`
 	ProductsIDs *[]uint  `json:"productsIDs"`
-	// @TODO: image
+	Image       *string  `json:"image"`
 }
 
 func FindMenuByContext(context *gin.Context) (menu *Menu, err error) {

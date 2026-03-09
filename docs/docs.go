@@ -34,7 +34,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Menu"
+                            "$ref": "#/definitions/models.MenuInsertInput"
                         }
                     }
                 ],
@@ -308,7 +308,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Order"
+                            "$ref": "#/definitions/models.OrderInsertInput"
                         }
                     }
                 ],
@@ -710,7 +710,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Product"
+                            "$ref": "#/definitions/models.ProductInsertInput"
                         }
                     }
                 ],
@@ -766,7 +766,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductCategory"
+                            "$ref": "#/definitions/models.ProductCategoryInsertInput"
                         }
                     }
                 ],
@@ -1594,10 +1594,46 @@ const docTemplate = `{
                 }
             }
         },
+        "models.MenuInsertInput": {
+            "type": "object",
+            "required": [
+                "description",
+                "isAvailable",
+                "name",
+                "price",
+                "productsIDs"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "isAvailable": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "productsIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "models.MenuUpdateInput": {
             "type": "object",
             "properties": {
                 "description": {
+                    "type": "string"
+                },
+                "image": {
                     "type": "string"
                 },
                 "isAvailable": {
@@ -1653,6 +1689,25 @@ const docTemplate = `{
                 },
                 "userID": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.OrderInsertInput": {
+            "type": "object",
+            "required": [
+                "items",
+                "ticketNumber"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/models.OrderItemInput"
+                    }
+                },
+                "ticketNumber": {
+                    "type": "string"
                 }
             }
         },
@@ -1793,6 +1848,21 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ProductCategoryInsertInput": {
+            "type": "object",
+            "required": [
+                "description",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ProductCategoryUpdateInput": {
             "type": "object",
             "properties": {
@@ -1804,6 +1874,36 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ProductInsertInput": {
+            "type": "object",
+            "required": [
+                "categoryID",
+                "description",
+                "isAvailable",
+                "name",
+                "price"
+            ],
+            "properties": {
+                "categoryID": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "isAvailable": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "models.ProductUpdateInput": {
             "type": "object",
             "properties": {
@@ -1811,6 +1911,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "image": {
                     "type": "string"
                 },
                 "isAvailable": {
