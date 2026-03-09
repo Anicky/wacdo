@@ -58,12 +58,7 @@ func TestGetUsersUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestGetUsersAccessNotAllowed(testing *testing.T) {
@@ -79,12 +74,7 @@ func TestGetUsersAccessNotAllowed(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusForbidden, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Access not allowed.")
+	tests.AssertAccessNotAllowed(testing, response)
 }
 
 func TestGetUserSuccess(testing *testing.T) {
@@ -122,12 +112,7 @@ func TestGetUserUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestGetUserAccessNotAllowed(testing *testing.T) {
@@ -143,12 +128,7 @@ func TestGetUserAccessNotAllowed(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusForbidden, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Access not allowed.")
+	tests.AssertAccessNotAllowed(testing, response)
 }
 
 func TestGetUserNotFound(testing *testing.T) {

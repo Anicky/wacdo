@@ -3,7 +3,9 @@ package tests
 import (
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"os"
+	"testing"
 	"time"
 	"wacdo/config"
 	"wacdo/controllers"
@@ -13,6 +15,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -46,6 +49,24 @@ func AuthenticateUser(request *http.Request, userID uint) {
 
 func AuthenticateUserAsAdmin(request *http.Request) {
 	AuthenticateUser(request, 1)
+}
+
+func AssertUnauthorized(testing *testing.T, response *httptest.ResponseRecorder) {
+	assert.Equal(testing, http.StatusUnauthorized, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Unauthorized.")
+}
+
+func AssertAccessNotAllowed(testing *testing.T, response *httptest.ResponseRecorder) {
+	assert.Equal(testing, http.StatusForbidden, response.Code)
+
+	body := response.Body.String()
+
+	assert.Contains(testing, body, "error")
+	assert.Contains(testing, body, "Access not allowed.")
 }
 
 func setupTestDatabase() *gorm.DB {

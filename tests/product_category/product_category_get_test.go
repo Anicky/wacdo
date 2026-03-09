@@ -55,12 +55,7 @@ func TestGetProductCategoriesUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestGetProductCategorySuccess(testing *testing.T) {
@@ -98,12 +93,7 @@ func TestGetProductCategoryUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestGetProductCategoryNotFound(testing *testing.T) {

@@ -133,12 +133,7 @@ func TestPatchOrderInPreparationUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestPatchOrderInPreparationAccessNotAllowed(testing *testing.T) {
@@ -156,12 +151,7 @@ func TestPatchOrderInPreparationAccessNotAllowed(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusForbidden, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Access not allowed.")
+	tests.AssertAccessNotAllowed(testing, response)
 }
 
 func TestPatchOrderInPreparationNotFound(testing *testing.T) {
@@ -326,12 +316,7 @@ func TestPatchOrderPreparedUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestPatchOrderPreparedAccessNotAllowed(testing *testing.T) {
@@ -349,12 +334,7 @@ func TestPatchOrderPreparedAccessNotAllowed(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusForbidden, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Access not allowed.")
+	tests.AssertAccessNotAllowed(testing, response)
 }
 
 func TestPatchOrderPreparedNotFound(testing *testing.T) {
@@ -519,12 +499,7 @@ func TestPatchOrderDeliveredUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestPatchOrderDeliveredAccessNotAllowed(testing *testing.T) {
@@ -542,12 +517,7 @@ func TestPatchOrderDeliveredAccessNotAllowed(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusForbidden, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Access not allowed.")
+	tests.AssertAccessNotAllowed(testing, response)
 }
 
 func TestPatchOrderDeliveredNotFound(testing *testing.T) {

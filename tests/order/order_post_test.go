@@ -374,12 +374,7 @@ func TestPostOrderUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestPostOrderAccessNotAllowed(testing *testing.T) {
@@ -416,10 +411,5 @@ func TestPostOrderAccessNotAllowed(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusForbidden, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Access not allowed.")
+	tests.AssertAccessNotAllowed(testing, response)
 }

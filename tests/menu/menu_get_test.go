@@ -74,12 +74,7 @@ func TestGetMenusUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestGetMenuSuccess(testing *testing.T) {
@@ -128,12 +123,7 @@ func TestGetMenuUnauthorized(testing *testing.T) {
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, request)
 
-	assert.Equal(testing, http.StatusUnauthorized, response.Code)
-
-	body := response.Body.String()
-
-	assert.Contains(testing, body, "error")
-	assert.Contains(testing, body, "Unauthorized.")
+	tests.AssertUnauthorized(testing, response)
 }
 
 func TestGetMenuNotFound(testing *testing.T) {
