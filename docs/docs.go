@@ -1683,6 +1683,24 @@ const docTemplate = `{
                 }
             }
         },
+        "models.OrderItemInput": {
+            "type": "object",
+            "required": [
+                "quantity"
+            ],
+            "properties": {
+                "menuID": {
+                    "type": "integer"
+                },
+                "productID": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
         "models.OrderStatus": {
             "type": "string",
             "enum": [
@@ -1703,8 +1721,9 @@ const docTemplate = `{
             "properties": {
                 "items": {
                     "type": "array",
+                    "minItems": 1,
                     "items": {
-                        "$ref": "#/definitions/models.OrderItem"
+                        "$ref": "#/definitions/models.OrderItemInput"
                     }
                 },
                 "ticketNumber": {
@@ -1735,6 +1754,12 @@ const docTemplate = `{
                 },
                 "isAvailable": {
                     "type": "boolean"
+                },
+                "menus": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Menu"
+                    }
                 },
                 "name": {
                     "type": "string"

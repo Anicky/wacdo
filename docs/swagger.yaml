@@ -82,6 +82,18 @@ definitions:
       quantity:
         type: integer
     type: object
+  models.OrderItemInput:
+    properties:
+      menuID:
+        type: integer
+      productID:
+        type: integer
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - quantity
+    type: object
   models.OrderStatus:
     enum:
     - created
@@ -98,7 +110,8 @@ definitions:
     properties:
       items:
         items:
-          $ref: '#/definitions/models.OrderItem'
+          $ref: '#/definitions/models.OrderItemInput'
+        minItems: 1
         type: array
       ticketNumber:
         type: string
@@ -119,6 +132,10 @@ definitions:
         type: string
       isAvailable:
         type: boolean
+      menus:
+        items:
+          $ref: '#/definitions/models.Menu'
+        type: array
       name:
         type: string
       price:
