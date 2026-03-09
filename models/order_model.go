@@ -23,6 +23,19 @@ type Order struct {
 	DeliveredAt  time.Time
 }
 
+type OrderOutput struct {
+	ID           uint
+	Status       OrderStatus
+	TicketNumber string
+	Items        []OrderItem
+	UserID       uint
+	User         User `binding:"required"`
+	CreatedAt    time.Time
+	PreparedAt   time.Time
+	DeliveredAt  time.Time
+	TotalPrice   float64
+}
+
 type OrderItemInput struct {
 	Quantity  int  `json:"quantity" binding:"required,min=1"`
 	ProductID uint `json:"productID"`
@@ -66,4 +79,39 @@ func FindOrderById(context *gin.Context, id uint) (order *Order, err error) {
 	}
 
 	return order, nil
+}
+
+func TransformOrdersToOutput(orders []Order) []OrderOutput {
+	var outputOrders []OrderOutput
+
+	for _, order := range orders {
+		outputOrders = append(outputOrders, TransformOrderToOutput(&order))
+	}
+
+	return outputOrders
+}
+
+func TransformOrderToOutput(order *Order) OrderOutput {
+	return OrderOutput{
+		ID:           order.ID,
+		Status:       order.Status,
+		TicketNumber: order.TicketNumber,
+		Items:        order.Items,
+		UserID:       order.UserID,
+		User:         order.User,
+		CreatedAt:    order.CreatedAt,
+		PreparedAt:   order.PreparedAt,
+		DeliveredAt:  order.DeliveredAt,
+		TotalPrice:   calculateOrderTotalPrice(order),
+	}
+}
+
+func calculateOrderTotalPrice(order *Order) float64 {
+	var totalPrice float64
+
+	for _, item := range order.Items {
+		totalPrice += item.OrderContentPrice * float64(item.Quantity)
+	}
+
+	return totalPrice
 }

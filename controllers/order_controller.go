@@ -9,9 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @TODO: calculer prix total
-// @TODO: revoir format float prix (indiquer nombre décimales)
-
 // GetOrders godoc
 // @Description Récupérer toutes les commandes
 // @Tags Orders
@@ -22,12 +19,12 @@ import (
 func GetOrders(context *gin.Context) {
 	var orders []models.Order
 
-	if err := config.DB.Preload("User").Find(&orders).Error; err != nil {
+	if err := config.DB.Preload("User").Preload("Items").Find(&orders).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch orders."})
 		return
 	}
 
-	context.JSON(http.StatusOK, orders)
+	context.JSON(http.StatusOK, models.TransformOrdersToOutput(orders))
 }
 
 // GetOrder godoc
@@ -45,7 +42,7 @@ func GetOrder(context *gin.Context) {
 	order, err := models.FindOrderByContext(context)
 
 	if err == nil {
-		context.JSON(http.StatusOK, order)
+		context.JSON(http.StatusOK, models.TransformOrderToOutput(order))
 	}
 }
 
@@ -92,7 +89,7 @@ func PostOrder(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusCreated, order)
+	context.JSON(http.StatusCreated, models.TransformOrderToOutput(&order))
 }
 
 // PutOrder godoc
@@ -159,7 +156,7 @@ func PutOrder(context *gin.Context) {
 			}
 		}
 
-		context.JSON(http.StatusOK, order)
+		context.JSON(http.StatusOK, models.TransformOrderToOutput(order))
 	}
 }
 
@@ -207,7 +204,7 @@ func PatchOrderInPreparation(context *gin.Context) {
 			return
 		}
 
-		context.JSON(http.StatusOK, order)
+		context.JSON(http.StatusOK, models.TransformOrderToOutput(order))
 	}
 }
 
@@ -255,7 +252,7 @@ func PatchOrderPrepared(context *gin.Context) {
 			return
 		}
 
-		context.JSON(http.StatusOK, order)
+		context.JSON(http.StatusOK, models.TransformOrderToOutput(order))
 	}
 }
 
@@ -297,6 +294,6 @@ func PatchOrderDelivered(context *gin.Context) {
 			return
 		}
 
-		context.JSON(http.StatusOK, order)
+		context.JSON(http.StatusOK, models.TransformOrderToOutput(order))
 	}
 }
