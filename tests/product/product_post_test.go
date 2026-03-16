@@ -22,6 +22,7 @@ func TestPostProductSuccess(testing *testing.T) {
 		"price":       8.25,
 		"isAvailable": true,
 		"categoryId":  1,
+		"image":       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
 	}
 
 	data, err := json.Marshal(product)
@@ -52,6 +53,7 @@ func TestPostProductSuccess(testing *testing.T) {
 	assert.Equal(testing, "Test product description 5", result.Description)
 	assert.Equal(testing, 8.25, result.Price)
 	assert.True(testing, result.IsAvailable)
+	assert.Equal(testing, "https://res.cloudinary.com/demo/image/upload/sample.jpg", result.Image)
 }
 
 func TestPostProductInvalidCategory(testing *testing.T) {

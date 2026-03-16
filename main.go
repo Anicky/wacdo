@@ -56,6 +56,7 @@ func main() {
 	routes.OrderRoutes(router)
 
 	config.ConnectDB()
+	config.ConnectCloudinary()
 
 	err = config.DB.AutoMigrate(
 		&models.User{},

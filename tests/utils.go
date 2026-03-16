@@ -29,6 +29,7 @@ func InitTest() *gin.Engine {
 	}
 
 	config.DB = setupTestDatabase()
+	config.UploadAPI = &CloudinaryMock{}
 
 	router := gin.Default()
 

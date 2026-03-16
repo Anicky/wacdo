@@ -22,6 +22,7 @@ func TestPutMenuSuccess(testing *testing.T) {
 		"price":       8.21,
 		"isAvailable": false,
 		"productsIDs": []int{3},
+		"image":       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
 	}
 
 	data, err := json.Marshal(menu)
@@ -52,6 +53,7 @@ func TestPutMenuSuccess(testing *testing.T) {
 	assert.Equal(testing, "Test menu description 1b", result.Description)
 	assert.Equal(testing, 8.21, result.Price)
 	assert.False(testing, result.IsAvailable)
+	assert.Equal(testing, "https://res.cloudinary.com/demo/image/upload/sample.jpg", result.Image)
 	assert.Equal(testing, 1, len(result.Products))
 	assert.Equal(testing, "Test product 3", result.Products[0].Name)
 	assert.Equal(testing, "Test product description 3", result.Products[0].Description)
