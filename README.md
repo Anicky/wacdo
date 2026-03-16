@@ -48,7 +48,7 @@ Ce projet permet aux employés de Wacdo de prendre des commandes, gérer l'avanc
 
 ## Déploiement de l'application
 
-L'application a été déployée sur Render, à l'adresse suivante : https://wacdo.onrender.com
+L'application a été déployée sur Render, à l'adresse suivante : https://wacdo-api-cggl.onrender.com
 
 ## Installation et configuration
 
