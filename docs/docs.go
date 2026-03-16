@@ -69,7 +69,32 @@ const docTemplate = `{
                 }
             }
         },
-        "/menu": {
+        "/menus": {
+            "get": {
+                "description": "Récupérer tous les menus",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menus"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Menu"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "description": "Créer un nouveau menu",
                 "consumes": [
@@ -114,33 +139,6 @@ const docTemplate = `{
                             "type": "object",
                             "additionalProperties": {
                                 "type": "string"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/menus": {
-            "get": {
-                "description": "Récupérer tous les menus",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menus"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Menu"
                             }
                         }
                     }
@@ -343,7 +341,32 @@ const docTemplate = `{
                 ]
             }
         },
-        "/order": {
+        "/orders": {
+            "get": {
+                "description": "Récupérer toutes les commandes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Order"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "description": "Créer une nouvelle commande",
                 "consumes": [
@@ -388,33 +411,6 @@ const docTemplate = `{
                             "type": "object",
                             "additionalProperties": {
                                 "type": "string"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/orders": {
-            "get": {
-                "description": "Récupérer toutes les commandes",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Orders"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Order"
                             }
                         }
                     }

@@ -56,7 +56,7 @@ func GetMenu(context *gin.Context) {
 // @Failure 400 {object} map[string]string "Données invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"
 // @Security BearerAuth
-// @Router /menu [post]
+// @Router /menus [post]
 func PostMenu(context *gin.Context) {
 	var input models.MenuInsertInput
 	if err := context.ShouldBindJSON(&input); err != nil {

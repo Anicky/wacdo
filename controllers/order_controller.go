@@ -56,7 +56,7 @@ func GetOrder(context *gin.Context) {
 // @Failure 400 {object} map[string]string "Données invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"
 // @Security BearerAuth
-// @Router /order [post]
+// @Router /orders [post]
 func PostOrder(context *gin.Context) {
 	var input models.OrderInsertInput
 	if err := context.ShouldBindJSON(&input); err != nil {
