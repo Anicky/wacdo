@@ -825,41 +825,6 @@ paths:
       - BearerAuth: []
       tags:
       - Products
-  /product/categories:
-    post:
-      consumes:
-      - application/json
-      description: Créer une nouvelle catégorie de produit
-      parameters:
-      - description: Données de la catégorie du produit
-        in: body
-        name: productCategory
-        required: true
-        schema:
-          $ref: '#/definitions/models.ProductCategoryInsertInput'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ProductCategory'
-        "400":
-          description: Données invalides
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Erreur interne
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      tags:
-      - ProductsCategories
   /products:
     get:
       description: Récupérer tous les produits
@@ -1010,6 +975,40 @@ paths:
             items:
               $ref: '#/definitions/models.ProductCategory'
             type: array
+      security:
+      - BearerAuth: []
+      tags:
+      - ProductsCategories
+    post:
+      consumes:
+      - application/json
+      description: Créer une nouvelle catégorie de produit
+      parameters:
+      - description: Données de la catégorie du produit
+        in: body
+        name: productCategory
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductCategoryInsertInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ProductCategory'
+        "400":
+          description: Données invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       security:
       - BearerAuth: []
       tags:

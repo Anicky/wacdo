@@ -55,7 +55,7 @@ func GetProductCategory(context *gin.Context) {
 // @Failure 400 {object} map[string]string "Données invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"
 // @Security BearerAuth
-// @Router /product/categories [post]
+// @Router /products/categories [post]
 func PostProductCategory(context *gin.Context) {
 	var input models.ProductCategoryInsertInput
 	if err := context.ShouldBindJSON(&input); err != nil {

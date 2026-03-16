@@ -801,7 +801,59 @@ const docTemplate = `{
                 ]
             }
         },
-        "/product/categories": {
+        "/products": {
+            "get": {
+                "description": "Récupérer tous les produits",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Product"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/products/categories": {
+            "get": {
+                "description": "Récupérer toutes les catégories de produits",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductsCategories"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductCategory"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "description": "Créer une nouvelle catégorie de produit",
                 "consumes": [
@@ -846,60 +898,6 @@ const docTemplate = `{
                             "type": "object",
                             "additionalProperties": {
                                 "type": "string"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/products": {
-            "get": {
-                "description": "Récupérer tous les produits",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Product"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/products/categories": {
-            "get": {
-                "description": "Récupérer toutes les catégories de produits",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductsCategories"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ProductCategory"
                             }
                         }
                     }
