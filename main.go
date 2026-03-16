@@ -51,6 +51,7 @@ func main() {
 		context.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
 	})
 
+	routes.AuthenticationRoutes(router)
 	routes.UserRoutes(router)
 	routes.ProductCategoryRoutes(router)
 	routes.ProductRoutes(router)

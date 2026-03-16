@@ -328,6 +328,41 @@ info:
   title: Wacdo
   version: "1.0"
 paths:
+  /authentication/login:
+    post:
+      consumes:
+      - application/json
+      description: Se connecter (pour obtenir un token JWT)
+      parameters:
+      - description: Identifiants utilisateur (email, password)
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserLoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token JWT
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Identifiants invalides
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erreur interne
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      tags:
+      - Authentication
   /menu:
     post:
       consumes:
@@ -1265,41 +1300,6 @@ paths:
             type: object
       security:
       - BearerAuth: []
-      tags:
-      - Users
-  /users/login:
-    post:
-      consumes:
-      - application/json
-      description: Se connecter (pour obtenir un token JWT)
-      parameters:
-      - description: Identifiants utilisateur (email, password)
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/models.UserLoginInput'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Token JWT
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Identifiants invalides
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Erreur interne
-          schema:
-            additionalProperties:
-              type: string
-            type: object
       tags:
       - Users
 securityDefinitions:

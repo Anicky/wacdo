@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUserLoginSuccess(testing *testing.T) {
+func TestAuthenticateSuccess(testing *testing.T) {
 	router := tests.InitTest()
 
 	user := map[string]interface{}{
@@ -25,7 +25,7 @@ func TestUserLoginSuccess(testing *testing.T) {
 		log.Fatal("Unable to marshal data: ", err)
 	}
 
-	request, err := http.NewRequest(http.MethodPost, "/users/login", bytes.NewBuffer(data))
+	request, err := http.NewRequest(http.MethodPost, "/authentication/login", bytes.NewBuffer(data))
 	if err != nil {
 		log.Fatal("Unable to create request: ", err)
 	}
@@ -40,7 +40,7 @@ func TestUserLoginSuccess(testing *testing.T) {
 	assert.Contains(testing, response.Body.String(), "token")
 }
 
-func TestUserLoginInvalidUsername(testing *testing.T) {
+func TestAuthenticateInvalidUsername(testing *testing.T) {
 	router := tests.InitTest()
 
 	user := map[string]interface{}{
@@ -53,7 +53,7 @@ func TestUserLoginInvalidUsername(testing *testing.T) {
 		log.Fatal("Unable to marshal data: ", err)
 	}
 
-	request, err := http.NewRequest(http.MethodPost, "/users/login", bytes.NewBuffer(data))
+	request, err := http.NewRequest(http.MethodPost, "/authentication/login", bytes.NewBuffer(data))
 	if err != nil {
 		log.Fatal("Unable to create request: ", err)
 	}
@@ -68,7 +68,7 @@ func TestUserLoginInvalidUsername(testing *testing.T) {
 	assert.Contains(testing, response.Body.String(), "Invalid email or password.")
 }
 
-func TestUserLoginInvalidPassword(testing *testing.T) {
+func TestAuthenticateInvalidPassword(testing *testing.T) {
 	router := tests.InitTest()
 
 	user := map[string]interface{}{
@@ -81,7 +81,7 @@ func TestUserLoginInvalidPassword(testing *testing.T) {
 		log.Fatal("Unable to marshal data: ", err)
 	}
 
-	request, err := http.NewRequest(http.MethodPost, "/users/login", bytes.NewBuffer(data))
+	request, err := http.NewRequest(http.MethodPost, "/authentication/login", bytes.NewBuffer(data))
 	if err != nil {
 		log.Fatal("Unable to create request: ", err)
 	}

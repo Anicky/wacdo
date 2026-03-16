@@ -33,6 +33,7 @@ func InitTest() *gin.Engine {
 
 	router := gin.Default()
 
+	routes.AuthenticationRoutes(router)
 	routes.UserRoutes(router)
 	routes.ProductCategoryRoutes(router)
 	routes.ProductRoutes(router)
