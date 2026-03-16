@@ -16,8 +16,6 @@ import (
 	_ "wacdo/docs"
 )
 
-// @TODO: add username/password fields in swagger
-
 // @title Wacdo
 // @version 1.0
 // @description Order management application for Wacdo
@@ -48,6 +46,10 @@ func main() {
 	})
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	router.GET("/", func(context *gin.Context) {
+		context.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+	})
 
 	routes.UserRoutes(router)
 	routes.ProductCategoryRoutes(router)

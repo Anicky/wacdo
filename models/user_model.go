@@ -13,15 +13,26 @@ import (
 
 type User struct {
 	ID        uint   `gorm:"primaryKey"`
-	Email     string `gorm:"unique" binding:"required,email"`
-	Password  string `binding:"required,min=8"`
+	Email     string `gorm:"unique"`
+	Password  string
 	Role      UserRole
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
+type UserLoginInput struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=8"`
+}
+
+type UserInsertInput struct {
+	Email    string   `json:"email" binding:"required,email"`
+	Password string   `json:"password" binding:"required,min=8"`
+	Role     UserRole `json:"role" binding:"required"`
+}
+
 type UserUpdateInput struct {
-	Email    *string   `json:"email"`
+	Email    *string   `json:"email" binding:"omitempty,email"`
 	Password *string   `json:"password"`
 	Role     *UserRole `json:"role"`
 }

@@ -147,6 +147,34 @@ func TestPutUserInvalidPassword(testing *testing.T) {
 	assert.Equal(testing, http.StatusBadRequest, response.Code)
 }
 
+func TestPutUserInvalidRole(testing *testing.T) {
+	router := tests.InitTest()
+
+	user := map[string]interface{}{
+		"role": "invalid_role",
+	}
+
+	data, err := json.Marshal(user)
+	if err != nil {
+		log.Fatal("Unable to marshal data: ", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPut, "/users/1", bytes.NewBuffer(data))
+	if err != nil {
+		log.Fatal("Unable to create request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	tests.AuthenticateUserAsAdmin(request)
+
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	assert.Equal(testing, http.StatusBadRequest, response.Code)
+	assert.Contains(testing, response.Body.String(), "Invalid role.")
+}
+
 func TestPutUserError(testing *testing.T) {
 	router := tests.InitTest()
 

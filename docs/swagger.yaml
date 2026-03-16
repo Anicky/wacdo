@@ -257,11 +257,32 @@ definitions:
       id:
         type: integer
       password:
-        minLength: 8
         type: string
       role:
         $ref: '#/definitions/models.UserRole'
       updatedAt:
+        type: string
+    type: object
+  models.UserInsertInput:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      role:
+        $ref: '#/definitions/models.UserRole'
+    required:
+    - email
+    - password
+    - role
+    type: object
+  models.UserLoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
         type: string
     required:
     - email
@@ -1106,7 +1127,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/models.UserInsertInput'
       produces:
       - application/json
       responses:
@@ -1257,7 +1278,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/models.UserLoginInput'
       produces:
       - application/json
       responses:

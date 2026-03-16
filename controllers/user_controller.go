@@ -23,13 +23,13 @@ type CustomClaim struct {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param user body models.User true "Identifiants utilisateur (email, password)"
+// @Param user body models.UserLoginInput true "Identifiants utilisateur (email, password)"
 // @Success 200 {object} map[string]string "Token JWT"
 // @Failure 400 {object} map[string]string "Identifiants invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"
 // @Router /users/login [post]
 func Login(context *gin.Context) {
-	var user models.User
+	var user models.UserLoginInput
 
 	if err := context.ShouldBindJSON(&user); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data."})
@@ -112,23 +112,23 @@ func GetUser(context *gin.Context) {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param user body models.User true "Données de l'utilisateur"
+// @Param user body models.UserInsertInput true "Données de l'utilisateur"
 // @Success 201 {object} models.UserOutput
 // @Failure 400 {object} map[string]string "Données invalides"
 // @Failure 500 {object} map[string]string "Erreur interne"
 // @Security BearerAuth
 // @Router /users [post]
 func PostUser(context *gin.Context) {
-	var user models.User
+	var input models.UserInsertInput
 
-	if err := context.ShouldBindJSON(&user); err != nil {
+	if err := context.ShouldBindJSON(&input); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data."})
 
 		return
 	}
 
 	var count int64
-	config.DB.Model(&models.User{}).Where("email = ?", user.Email).Count(&count)
+	config.DB.Model(&models.User{}).Where("email = ?", input.Email).Count(&count)
 
 	if count > 0 {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Email already used."})
@@ -136,20 +136,30 @@ func PostUser(context *gin.Context) {
 		return
 	}
 
-	if err := utils.ValidatePassword(user.Password); err != nil {
+	if err := utils.ValidatePassword(input.Password); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password."})
 
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if !input.Role.IsValid() {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role."})
+
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to hash password."})
 
 		return
 	}
 
-	user.Password = string(hashedPassword)
+	user := models.User{
+		Email:    input.Email,
+		Password: string(hashedPassword),
+		Role:     input.Role,
+	}
 
 	if err := config.DB.Create(&user).Error; err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create user."})
@@ -198,6 +208,12 @@ func PutUser(context *gin.Context) {
 		}
 
 		if input.Role != nil {
+			if !input.Role.IsValid() {
+				context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role."})
+
+				return
+			}
+
 			updates["role"] = *input.Role
 		}
 

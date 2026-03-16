@@ -1283,7 +1283,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserInsertInput"
                         }
                     }
                 ],
@@ -1339,7 +1339,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserLoginInput"
                         }
                     }
                 ],
@@ -1929,10 +1929,6 @@ const docTemplate = `{
         },
         "models.User": {
             "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -1944,14 +1940,49 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "password": {
-                    "type": "string",
-                    "minLength": 8
+                    "type": "string"
                 },
                 "role": {
                     "$ref": "#/definitions/models.UserRole"
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "models.UserInsertInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "role"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "role": {
+                    "$ref": "#/definitions/models.UserRole"
+                }
+            }
+        },
+        "models.UserLoginInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
                 }
             }
         },
