@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 	"wacdo/config"
 	"wacdo/middlewares"
 	"wacdo/models"
@@ -243,7 +244,8 @@ func PatchOrderPrepared(context *gin.Context) {
 		}
 
 		updates := map[string]interface{}{
-			"status": models.Prepared,
+			"status":     models.Prepared,
+			"preparedAt": time.Now(),
 		}
 
 		if err := config.DB.Model(&order).Updates(updates).Error; err != nil {
@@ -285,7 +287,8 @@ func PatchOrderDelivered(context *gin.Context) {
 		}
 
 		updates := map[string]interface{}{
-			"status": models.Delivered,
+			"status":      models.Delivered,
+			"deliveredAt": time.Now(),
 		}
 
 		if err := config.DB.Model(&order).Updates(updates).Error; err != nil {

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 	"wacdo/models"
 	"wacdo/tests"
 
@@ -49,7 +50,7 @@ func TestPutOrderSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	result := models.Order{}
+	result := models.OrderOutput{}
 	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
 		log.Fatal("Unable to decode JSON: ", err)
 	}
@@ -57,6 +58,9 @@ func TestPutOrderSuccess(testing *testing.T) {
 	assert.Equal(testing, "006", result.TicketNumber)
 	assert.Equal(testing, models.Created, result.Status)
 	assert.Equal(testing, "greeter1@example.com", result.User.Email)
+	assert.Equal(testing, 19.58, result.TotalPrice)
+	assert.Equal(testing, time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), result.PreparedAt)
+	assert.Equal(testing, time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), result.DeliveredAt)
 
 	assert.Equal(testing, 2, len(result.Items))
 

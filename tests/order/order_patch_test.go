@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 	"wacdo/models"
 	"wacdo/tests"
 
@@ -29,7 +30,7 @@ func TestPatchOrderInPreparationSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	result := models.Order{}
+	result := models.OrderOutput{}
 	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
 		log.Fatal("Unable to decode JSON: ", err)
 	}
@@ -37,6 +38,10 @@ func TestPatchOrderInPreparationSuccess(testing *testing.T) {
 	assert.Equal(testing, "001", result.TicketNumber)
 	assert.Equal(testing, models.InPreparation, result.Status)
 	assert.Equal(testing, "greeter1@example.com", result.User.Email)
+	assert.NotContains(testing, "password", result.User)
+	assert.Equal(testing, 13.54, result.TotalPrice)
+	assert.Equal(testing, time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), result.PreparedAt)
+	assert.Equal(testing, time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), result.DeliveredAt)
 
 	assert.Equal(testing, 2, len(result.Items))
 
@@ -217,7 +222,7 @@ func TestPatchOrderPreparedSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	result := models.Order{}
+	result := models.OrderOutput{}
 	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
 		log.Fatal("Unable to decode JSON: ", err)
 	}
@@ -225,6 +230,10 @@ func TestPatchOrderPreparedSuccess(testing *testing.T) {
 	assert.Equal(testing, "002", result.TicketNumber)
 	assert.Equal(testing, models.Prepared, result.Status)
 	assert.Equal(testing, "greeter2@example.com", result.User.Email)
+	assert.NotContains(testing, "password", result.User)
+	assert.Equal(testing, 4.99, result.TotalPrice)
+	assert.NotEqual(testing, time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), result.PreparedAt)
+	assert.Equal(testing, time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), result.DeliveredAt)
 
 	assert.Equal(testing, 1, len(result.Items))
 
@@ -400,7 +409,7 @@ func TestPatchOrderDeliveredSuccess(testing *testing.T) {
 
 	assert.Equal(testing, http.StatusOK, response.Code)
 
-	result := models.Order{}
+	result := models.OrderOutput{}
 	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
 		log.Fatal("Unable to decode JSON: ", err)
 	}
@@ -408,6 +417,9 @@ func TestPatchOrderDeliveredSuccess(testing *testing.T) {
 	assert.Equal(testing, "003", result.TicketNumber)
 	assert.Equal(testing, models.Delivered, result.Status)
 	assert.Equal(testing, "greeter1@example.com", result.User.Email)
+	assert.NotContains(testing, "password", result.User)
+	assert.Equal(testing, 7.2, result.TotalPrice)
+	assert.NotEqual(testing, time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), result.DeliveredAt)
 
 	assert.Equal(testing, 1, len(result.Items))
 

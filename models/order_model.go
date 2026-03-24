@@ -29,7 +29,7 @@ type OrderOutput struct {
 	TicketNumber string
 	Items        []OrderItem
 	UserID       uint
-	User         User `binding:"required"`
+	User         UserOutput `binding:"required"`
 	CreatedAt    time.Time
 	PreparedAt   time.Time
 	DeliveredAt  time.Time
@@ -98,7 +98,7 @@ func TransformOrderToOutput(order *Order) OrderOutput {
 		TicketNumber: order.TicketNumber,
 		Items:        order.Items,
 		UserID:       order.UserID,
-		User:         order.User,
+		User:         TransformUserToOutput(&order.User),
 		CreatedAt:    order.CreatedAt,
 		PreparedAt:   order.PreparedAt,
 		DeliveredAt:  order.DeliveredAt,
